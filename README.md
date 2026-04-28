@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="Marketing/Icons/AppStore/icon_1024x1024.png" alt="JellySeeTV" width="180">
+</p>
+
 <h1 align="center">JellySeeTV</h1>
 
 <p align="center">
