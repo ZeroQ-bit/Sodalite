@@ -17,7 +17,7 @@ For the long pitch see the [README](README.md).
 
 ## Install the build
 
-1. On any device signed in with your Apple ID, open the public TestFlight link: **https://testflight.apple.com/join/eFKDaaXr**
+1. On any device signed in with your Apple ID, open the public TestFlight link: **https://testflight.apple.com/join/nWeQzmBX**
 2. Tap **Accept** and **Install** — TestFlight handles the rest
 3. On your Apple TV, install the **TestFlight** app from the App Store if it isn't already there
 4. Sign in with the same Apple ID; **Sodalite** appears in the list — tap **Install**

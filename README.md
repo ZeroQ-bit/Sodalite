@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/status-public%20beta-orange">
 </p>
 
-> 🧪 **Public Beta is open.** Install via TestFlight: **https://testflight.apple.com/join/eFKDaaXr**
+> 🧪 **Public Beta is open.** Install via TestFlight: **https://testflight.apple.com/join/nWeQzmBX**
 > See [BETA.md](BETA.md) for what to focus on and how to report bugs.
 
 ---

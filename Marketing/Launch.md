@@ -6,7 +6,7 @@ The vibe-coded disclosure is in every post on purpose. Self-hosted and Apple-pla
 
 ## Step 0: Pre-flight
 
-* Public TestFlight link: `https://testflight.apple.com/join/eFKDaaXr`
+* Public TestFlight link: `https://testflight.apple.com/join/nWeQzmBX`
 * Public beta version: **0.3.2** — stable, plenty of internal testing, ready for outside eyes
 * Apple TV Top Shelf integration and Siri voice commands are landed in `main` but **not yet in the public beta** (planned for 0.4.0). Keep them out of the launch copy below so installers don't go looking for features that aren't there yet.
 * Privacy policy + imprint live at `https://sodalite.superuser404.de`
@@ -28,7 +28,7 @@ Public Beta is live. TestFlight link inside.
 ```markdown
 Sodalite is now in public beta on TestFlight.
 
-**Install:** https://testflight.apple.com/join/eFKDaaXr
+**Install:** https://testflight.apple.com/join/nWeQzmBX
 
 You need an Apple TV 4K running tvOS 26 or later, plus your own Jellyfin server.
 
@@ -112,7 +112,7 @@ I built Sodalite, a native Apple TV client for Jellyfin with first-class Jellyse
 
 [2x2 screenshot collage embedded here]
 
-**TestFlight:** https://testflight.apple.com/join/eFKDaaXr
+**TestFlight:** https://testflight.apple.com/join/nWeQzmBX
 **Source:** https://github.com/superuser404notfound/Sodalite
 
 ## What it is
@@ -178,7 +178,7 @@ If you self-host Jellyfin and have an Apple TV in the living room, Sodalite migh
 
 [2x2 screenshot collage embedded here]
 
-**TestFlight:** https://testflight.apple.com/join/eFKDaaXr
+**TestFlight:** https://testflight.apple.com/join/nWeQzmBX
 **Source and audit:** https://github.com/superuser404notfound/Sodalite
 **Privacy policy:** https://sodalite.superuser404.de/privacy (zero data collected)
 
@@ -240,7 +240,7 @@ For the Jellyfin users in here: Sodalite is now in public TestFlight beta.
 
 [2x2 screenshot collage embedded here]
 
-**Install:** https://testflight.apple.com/join/eFKDaaXr
+**Install:** https://testflight.apple.com/join/nWeQzmBX
 
 Native tvOS app. Proper transport bar, focus engine, HDR and Dolby Vision display switching, Dolby Atmos via EAC3+JOC passthrough. Built ground-up on SwiftUI plus a custom video engine. Cold-launches quickly, scrolls smoothly, stays out of the way.
 
@@ -264,7 +264,7 @@ Sodalite: open-source native Jellyfin client for Apple TV with built-in Jellysee
 
 Fast. Lean. Real HDR10. Real Dolby Vision. Real Dolby Atmos. No telemetry, no analytics, no third-party SDKs. GPL-3.0 with App Store Exception. Vibe-coded with Claude, every change reviewed, source is open.
 
-TestFlight: https://testflight.apple.com/join/eFKDaaXr
+TestFlight: https://testflight.apple.com/join/nWeQzmBX
 Source: https://github.com/superuser404notfound/Sodalite
 
 Apple TV 4K and tvOS 26+ required.
