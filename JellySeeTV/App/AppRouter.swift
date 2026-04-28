@@ -78,11 +78,14 @@ struct AppRouter: View {
         }
         .onChange(of: appState.isLoading) { _, isLoading in
             // Splash just finished. Fire the What's-New modal if the
-            // version stamp says we crossed a release boundary, and
-            // bootstrap on first install so we don't pester a brand-
-            // new user.
+            // version stamp says we crossed a release boundary.
+            // Pass isAuthenticated so the preference layer can tell
+            // a fresh install (don't pester) apart from an upgrade
+            // from a pre-Changelog version (0.3.2 and earlier never
+            // wrote lastSeenVersion → without this, those users
+            // would silently miss the modal forever).
             guard !isLoading else { return }
-            if ChangelogPreferences.shouldShowOnLaunch() {
+            if ChangelogPreferences.shouldShowOnLaunch(isExistingUser: appState.isAuthenticated) {
                 showWhatsNew = true
             } else {
                 ChangelogPreferences.bootstrapIfNeeded()
