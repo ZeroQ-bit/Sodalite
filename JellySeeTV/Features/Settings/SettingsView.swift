@@ -302,6 +302,12 @@ struct SettingsTile<Destination: View>: View {
 
 struct SettingsTileButtonStyle: ButtonStyle {
     @Environment(\.isFocused) private var isFocused
+    /// Reads the `.disabled(...)` modifier upstream. The default tvOS
+    /// bordered style auto-dims when disabled, but a custom ButtonStyle
+    /// has to do that work itself — without this read, a disabled
+    /// Request / Restore / Logout tile looks identical to an enabled
+    /// one.
+    @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -316,6 +322,7 @@ struct SettingsTileButtonStyle: ButtonStyle {
             )
             .scaleEffect(isFocused ? 1.03 : 1.0)
             .shadow(color: .black.opacity(isFocused ? 0.3 : 0), radius: 15, y: 8)
+            .opacity(isEnabled ? 1.0 : 0.4)
             .animation(.easeInOut(duration: 0.2), value: isFocused)
     }
 }
