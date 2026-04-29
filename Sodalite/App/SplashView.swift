@@ -9,8 +9,9 @@ import SwiftUI
 /// minimum on-screen time is `appearDuration + holdDuration` so the
 /// splash never just blinks past on a fast session restore.
 ///
-/// Supporters see the gold "Premium" variant rendered in its original
-/// colors. Everyone else sees the standard white template logo.
+/// Supporters see the crowned "Premium" variant. Everyone else sees
+/// the standard Sodalite gem — both render in their full sodalite-blue
+/// brand colors, no template tint.
 struct SplashView: View {
 
     @Environment(\.dependencies) private var dependencies
@@ -41,15 +42,11 @@ struct SplashView: View {
     @ViewBuilder
     private var logo: some View {
         if dependencies.storeKitService.isSupporter {
-            // Premium logo ships with original rendering intent, so the
-            // gold color comes through without a `renderingMode` override.
             Image("PremiumLogo_Hero")
                 .resizable()
         } else {
             Image("Logo")
                 .resizable()
-                .renderingMode(.template)
-                .foregroundStyle(.white)
         }
     }
 

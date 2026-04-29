@@ -236,8 +236,7 @@ struct SettingsView: View {
         } else {
             Image("Logo")
                 .resizable()
-                .renderingMode(.template)
-                .foregroundStyle(.white.opacity(0.5))
+                .opacity(0.85)
         }
     }
 

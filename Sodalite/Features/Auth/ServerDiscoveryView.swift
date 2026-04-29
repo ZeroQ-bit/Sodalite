@@ -12,8 +12,6 @@ struct ServerDiscoveryView: View {
                 VStack(spacing: 24) {
                     Image("Logo")
                         .resizable()
-                        .renderingMode(.template)
-                        .foregroundStyle(.white)
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 120, height: 120)
 
