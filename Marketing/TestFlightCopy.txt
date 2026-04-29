@@ -127,3 +127,144 @@ superuser404@tuta.com
 ================================================================================
 
 https://sodalite.superuser404.de
+
+
+################################################################################
+#                                                                              #
+#                          DEUTSCHE FASSUNG / GERMAN                           #
+#                                                                              #
+################################################################################
+
+
+================================================================================
+1) APP STORE CONNECT — APP-DATENSCHUTZ → DATENSCHUTZRICHTLINIE (TEXTFELD)
+================================================================================
+
+Sodalite erfasst, überträgt oder teilt keine personenbezogenen Daten.
+Das im Bundle enthaltene Apple Privacy Manifest deklariert null
+Datenerhebung.
+
+Was die App lokal auf deinem Gerät speichert:
+- Server-Anmeldedaten (Jellyfin-/Seerr-URL, Access-Token, Session-
+  Cookie, optional dein Passwort) im System-Keychain. Damit bleibst du
+  nach einem Neustart eingeloggt.
+- Wiedergabe-Einstellungen (bevorzugte Audio-Sprache, Autoplay etc.)
+  in den UserDefaults.
+- Bild-Cache (Poster, Backdrops, die von deinem Jellyfin-Server
+  geladen wurden) im lokalen Cache-Verzeichnis der App. Wird vom
+  System bei knappem Speicher geleert oder beim Deinstallieren der
+  App.
+
+Was die App über das Netzwerk sendet:
+- HTTPS-/HTTP-Anfragen ausschließlich an die Jellyfin- und
+  (optionalen) Seerr-Server, die du selbst auswählst: Login,
+  Bibliotheks-Listen, Playback-Infos, Media-Segmente, Session-
+  Berichte, Bild-Downloads.
+- Keine Anfragen an den Entwickler oder Dritte. Keine Analytik-
+  Endpoints, keine Crash-Reporting-SDKs, keine Werbenetzwerke, keine
+  Telemetrie jeglicher Art.
+
+Drittanbieter-Dienste:
+- Keine. Sodalite nutzt keine Drittanbieter-SDKs für Analytik, Crash-
+  Reporting, Werbung oder Tracking.
+- Die Jellyfin- und Seerr-Server, mit denen du dich verbindest, werden
+  von dir oder einer Person betrieben, der du vertraust; sie liegen
+  außerhalb dieser Datenschutzerklärung.
+
+Kinder:
+- Sodalite erhebt keine personenbezogenen Daten — von niemandem, auch
+  nicht von Kindern.
+
+Änderungen:
+- Sollte sich diese Erklärung ändern, erscheint die aktualisierte
+  Fassung unter https://sodalite.superuser404.de/privacy und das App-
+  Store-Listing verweist auf das neue Änderungsdatum.
+
+Verantwortlicher / Kontakt:
+- Vincent Herbst, erreichbar über das Impressum unter
+  https://sodalite.superuser404.de/imprint oder per Issue auf
+  https://github.com/superuser404notfound/Sodalite/issues
+
+Vollständige zweisprachige Datenschutzerklärung (Deutsch + Englisch,
+DSGVO-konform): https://sodalite.superuser404.de/privacy
+
+
+================================================================================
+2) APP STORE CONNECT — APP-DATENSCHUTZ → STRUKTURIERTES FORMULAR
+================================================================================
+
+Wenn Apples Fragebogen fragt "Erfasst diese App oder einer ihrer
+Drittanbieter-Partner Daten?" → mit NEIN antworten.
+
+Apple generiert dann automatisch das Label "Es werden keine Daten
+erfasst" auf der App-Store-Detail-Seite. Keine weiteren Fragen zu
+beantworten.
+
+Datenschutzrichtlinie-URL: https://sodalite.superuser404.de/privacy
+Datenschutzeinstellungen-URL: leer lassen (kein Opt-out-Flow nötig,
+da keine Daten erfasst werden).
+
+
+================================================================================
+3) TESTFLIGHT — BETA-APP-BESCHREIBUNG
+================================================================================
+
+Sodalite ist ein schneller, nativer Apple-TV-Client für Jellyfin mit
+integrierter Jellyseerr-Anbindung. Echtes HDR10, Dolby Vision und
+Dolby Atmos Passthrough (EAC3+JOC eingepackt als Dolby MAT 2.0).
+Apple TV Top-Shelf-Integration, Siri-Sprachbefehl "Weiterschauen",
+26 Sprachen.
+
+Voraussetzungen: Apple TV 4K, tvOS 26 oder höher, dein eigener
+Jellyfin-Server (10.9+ empfohlen). Optional: Jellyseerr (2.0+) für
+den Request-Flow.
+
+Open Source unter GPL-3.0 (mit App Store Exception):
+https://github.com/superuser404notfound/Sodalite
+
+Datenschutz: Sodalite erfasst, überträgt oder teilt keine
+personenbezogenen Daten. Die App kommuniziert ausschließlich mit
+deinen eigenen Jellyfin-/Seerr-Servern — keine Analytik, keine
+Drittanbieter-SDKs, keine Telemetrie. Das im Bundle enthaltene
+Privacy Manifest bestätigt dies. Vollständige Erklärung:
+https://sodalite.superuser404.de/privacy
+
+
+================================================================================
+4) TESTFLIGHT — WAS GETESTET WERDEN SOLL
+================================================================================
+
+Schwerpunkt-Bereiche, in denen Feedback von außen am wertvollsten
+ist:
+
+- HDR-/Dolby-Vision-Display-Umschaltung auf verschiedenen TV-Modellen
+  und mit der "Match Content"-Einstellung
+- Atmos-Passthrough auf verschiedenen AVRs (dein Receiver macht
+  eventuell etwas, was meiner nicht macht)
+- Server-Discovery in ungewöhnlichen Netzwerk-Setups (mDNS aus,
+  mehrere Subnetze, VPN, IPv6-only)
+- Jellyseerr-Request-Flow, wenn deine Bibliothek nur teilweise mit
+  dem Seerr-Katalog überlappt
+- Top-Shelf-Kacheln: aktualisieren sie sich zuverlässig, nachdem du
+  etwas geschaut hast?
+- Siri-Sprachbefehl "Weiterschauen" auf verschiedenen Siri-Remote-
+  Generationen
+- Alles, was crasht
+
+Bug-Reports: TestFlight-Feedback (Screenshot + System-Info) oder
+GitHub Issues unter
+https://github.com/superuser404notfound/Sodalite/issues
+
+
+================================================================================
+5) TESTFLIGHT — FEEDBACK-E-MAIL (PFLICHTFELD)
+================================================================================
+
+superuser404@tuta.com
+
+
+================================================================================
+6) TESTFLIGHT — MARKETING-URL (OPTIONAL)
+================================================================================
+
+https://sodalite.superuser404.de
