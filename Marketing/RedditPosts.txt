@@ -1,0 +1,182 @@
+================================================================================
+SODALITE — REDDIT POST DRAFTS (post-rename)
+================================================================================
+
+Three subreddits, three slightly different framings. Don't post all three within
+a few hours of each other — Reddit's spam filters dislike that pattern, and you
+also need bandwidth to answer comments under each one. Spread over 2–3 days.
+
+Each post should embed Screenshots/reddit-collage.jpg once, near the top.
+
+Cadence:
+  Day 0 — r/jellyfin
+  Day +1 — r/selfhosted
+  Day +2 — r/AppleTV
+
+
+================================================================================
+1) r/jellyfin
+================================================================================
+
+TITLE
+-----
+[Beta] Sodalite (renamed from JellySeeTV — sorry to Jellysee/JellyTV for the namespace collision): native tvOS Jellyfin client, open source, GPL-3.0
+
+
+BODY
+----
+Hey r/jellyfin,
+
+Reposting after a rename. The original post went up as **JellySeeTV**, and the feedback was sharp and correct: that name reads like a mashup of two existing Jellyfin clients — Jellysee and JellyTV — and stepping into the namespace of projects that were there first, with a name that's basically theirs glued together, was a bad call. That's on me. No defending it.
+
+The app is now called **Sodalite** (a deep blue mineral — distinct name, no overlap, doesn't ride on anyone else's). Same code, same TestFlight, same author. I deleted the old post rather than editing it in place, because the name was the thing people were objecting to and an EDIT block doesn't fix that.
+
+[2x2 screenshot collage embedded here]
+
+**TestFlight:** https://testflight.apple.com/join/nWeQzmBX
+**Source:** https://github.com/superuser404notfound/Sodalite
+
+## What it is
+
+A focused, fast Apple TV client for Jellyfin. SwiftUI on top of a custom video engine that talks directly to FFmpeg, VideoToolbox, and AVPlayer — same focus engine, transport bar, and info-panel patterns the Apple TV+ app uses. Cold-launches quickly, scrolls smoothly, gets out of your way.
+
+The Jellyseerr piece is what I personally was missing. I want to browse trending content and request things from the couch without switching to a phone or a web UI. So that's a first-class part of the app, not a separate tab linking out.
+
+## Highlights
+
+* Direct Play for almost every codec your Apple TV understands: H.264, HEVC, HEVC Main10, AV1
+* Real HDR10 and Dolby Vision with automatic display-mode switching (Match Content)
+* Real Dolby Atmos via EAC3+JOC, wrapped as Dolby MAT 2.0, so your AVR's Atmos light actually lights up
+* Resume across devices, intro skip, next-episode autoplay
+* Subtitle and audio-track switching mid-playback
+* Apple TV Top Shelf integration and Siri "Continue Watching" voice command
+* 26 languages
+
+## What you won't find in it
+
+* No telemetry, no analytics, no tracking domains, no third-party SDKs
+* No upsell tab, no "rate this app" pop-up, no marketing newsletter prompt
+* No login wall — you connect to your server, that's it
+* Lean dependency graph: AVFoundation, VideoToolbox, FFmpeg, and the Jellyfin/Jellyseerr APIs themselves
+* GPL-3.0 with App Store Exception, fully auditable
+
+## A note on how this was built
+
+Sodalite is vibe-coded. I built it in close pair-programming with Claude (Anthropic). The architecture, the design decisions, and the review of every commit are mine. The code is open and in the repo precisely so it's not a "trust me bro" situation — if you want to see how a particular feature is structured before installing, look at it directly.
+
+The video engine is split out into its own LGPL-3.0 package (AetherEngine: https://github.com/superuser404notfound/AetherEngine) so it's reusable and reviewable on its own.
+
+## Requirements
+
+* Apple TV 4K (any generation)
+* tvOS 26.0 or later
+* Your own Jellyfin server (10.9+ recommended)
+* Optional: Jellyseerr (2.0+) for the request flow
+
+## What I'd love feedback on
+
+* HDR and Dolby Vision behavior on different TVs
+* Atmos passthrough on various AVRs
+* Edge cases in server discovery
+* Anything that crashes
+
+Bug reports: GitHub Issues are open with templates at https://github.com/superuser404notfound/Sodalite/issues — and there's a Discussions tab next to it for everything else (Q&A, ideas, show-and-tell). No Discord, deliberately: Discussions stays public and searchable.
+
+Happy to answer technical questions in the thread — including questions about the rename if anyone has them.
+
+
+================================================================================
+2) r/selfhosted
+================================================================================
+
+TITLE
+-----
+[Beta] Sodalite: open-source native Apple TV client for Jellyfin and Jellyseerr (GPL-3.0, no telemetry, vibe-coded but auditable)
+
+
+BODY
+----
+Hey r/selfhosted,
+
+If you self-host Jellyfin and have an Apple TV in the living room, Sodalite might be your missing piece. Native tvOS app, GPL-3.0 with App Store Exception, no telemetry, with built-in Jellyseerr integration so you can browse and request from the same UI.
+
+[2x2 screenshot collage embedded here]
+
+**TestFlight:** https://testflight.apple.com/join/nWeQzmBX
+**Source and audit:** https://github.com/superuser404notfound/Sodalite
+**Privacy policy:** https://sodalite.superuser404.de/privacy (zero data collected)
+
+## What it is
+
+* Native Apple TV client for Jellyfin
+* Jellyseerr request flow built in: browse trending, request, track status, all on the TV
+* Direct Play for HEVC, HEVC Main10, AV1, with HDR10, Dolby Vision, Dolby Atmos
+* Apple TV Top Shelf cells (jump straight back into Continue Watching from the Home screen) and Siri voice command for resume
+* Custom FFmpeg + VideoToolbox video engine
+* Open source, GPL-3.0 with App Store Exception. Fork it, audit it, ship your own version if you keep it open
+
+## Lean by design
+
+* No telemetry. No analytics. No tracking domains. No crash-reporting SDK that quietly phones home
+* No third-party SDKs of any kind
+* Dependency graph fits on a napkin: AVFoundation, VideoToolbox, FFmpeg (LGPL build, dynamic-linkable for App Store compliance), and the Jellyfin/Jellyseerr APIs themselves
+* Credentials live in the system Keychain, never written to disk in plaintext, never logged
+* Network traffic is auditable: open Sodalite/Services/ and you'll see exactly what's sent and where
+* The Privacy Manifest declares zero data collection because there is zero data collection
+
+## On vibe-coding, since this community will rightly ask
+
+I built this in close pair-programming with Claude. I want to be upfront about that because the term "vibe-coded" tends to come with the assumption of slop. This is the opposite of slop:
+
+* Every commit was reviewed before landing. Look at the git log: descriptive messages, focused diffs, no auto-generated noise
+* If you spot something wrong, file an issue or open a PR. The point of being open source is that you don't have to trust me, you can verify
+
+## Why open source
+
+For the same reason you self-host Jellyfin in the first place. The video engine (AetherEngine: https://github.com/superuser404notfound/AetherEngine) is LGPL-3.0 separately so it's reusable. The app shell on top is GPL-3.0. Both carry an App Store / DRM Exception so the App Store and TestFlight distribution paths stay legally clean.
+
+## Tech stack for the curious
+
+* SwiftUI with UIKit interop where it matters (player VC, gesture recognizers)
+* AVSampleBufferDisplayLayer driven by a CMTimebase synced to the audio clock
+* Local HLS server in-process to wrap EAC3+JOC into Dolby MAT 2.0 for Atmos passthrough through AVPlayer
+* Demux via FFmpeg, decode via VideoToolbox where possible, software fallback (dav1d) for AV1 on older hardware
+* Keychain for credentials, UserDefaults for preferences, nothing leaves the device
+
+## Beta status
+
+Internal testing has been running for a while; smoke tests pass; HDR and Atmos work on my own setup but I want feedback from more TVs and more receivers.
+
+Requirements: Apple TV 4K, tvOS 26+, your own Jellyfin server.
+
+Bug reports welcome on GitHub.
+
+
+================================================================================
+3) r/AppleTV
+================================================================================
+
+TITLE
+-----
+Sodalite: open-source native Jellyfin client for Apple TV is in public beta — fast, lean, real HDR + Atmos
+
+
+BODY
+----
+For the Jellyfin users in here: Sodalite is now in public TestFlight beta.
+
+[2x2 screenshot collage embedded here]
+
+**Install:** https://testflight.apple.com/join/nWeQzmBX
+
+Native tvOS app. Proper transport bar, focus engine, HDR and Dolby Vision display switching, Dolby Atmos via EAC3+JOC passthrough, Apple TV Top Shelf integration, and Siri "Continue Watching" voice command. Built ground-up on SwiftUI plus a custom video engine. Cold-launches quickly, scrolls smoothly, stays out of the way.
+
+Plus first-class Jellyseerr integration if you use that, so you can browse trending and request stuff directly from the couch.
+
+**Lean:** No telemetry, no analytics, no third-party SDKs, no upsell pop-ups. The Privacy Manifest declares zero data collection because there is zero data collection.
+
+**Requirements:** Apple TV 4K, tvOS 26+, your own Jellyfin server.
+
+It's GPL-3.0 licensed (with an Apple Store Exception so the App Store distribution stays legal) and fully open source. Code is at https://github.com/superuser404notfound/Sodalite. The app was built in pair-programming with Claude (Anthropic), with every change reviewed before commit, and the source is open so you can verify what it does before installing.
+
+Feedback welcome, particularly on HDR / Dolby Vision behavior across different TV models and Atmos handling on various AVRs. Bug reports go in GitHub Issues.
