@@ -316,34 +316,7 @@ final class PlayerViewModel {
                 player.selectAudioTrack(index: chosenAudio.id)
             }
 
-            // Subtitle preference resolved in three passes:
-            //
-            // 1. If the user picked a preferred subtitle language, use
-            //    that (explicit preference always wins).
-            // 2. Otherwise, if autoSubtitleForForeignAudio is on AND the
-            //    chosen audio isn't in the preferred audio language,
-            //    fall back to subtitles in the preferred audio language
-            //    — the "Netflix convention": German audio missing →
-            //    English audio plays → German subs on top.
-            // 3. No match → leave off.
-            let preferredSubLang: String? = {
-                if let explicit = preferences.preferredSubtitleLanguage {
-                    return explicit
-                }
-                let preferredAudio = preferences.preferredAudioLanguage
-                let audioIsForeign = preferredAudio != nil
-                    && chosenAudio?.language != preferredAudio
-                if preferences.autoSubtitleForForeignAudio,
-                   audioIsForeign,
-                   let preferredAudio {
-                    return preferredAudio
-                }
-                return nil
-            }()
-            if let preferredSubLang,
-               let match = subtitleStreams.first(where: { $0.language == preferredSubLang }) {
-                selectSubtitleTrack(id: match.index)
-            }
+            applyPreferredSubtitle(forAudioLanguage: chosenAudio?.language)
 
             isLoading = false
             isPlaying = true
@@ -550,6 +523,41 @@ final class PlayerViewModel {
     func selectAudioTrack(id: Int) {
         activeAudioIndex = id
         player.selectAudioTrack(index: id)
+        // Re-run the auto-subtitle resolution so a manual mid-playback
+        // language switch behaves like the initial load did. Without
+        // this, switching DE → EN inside the player kept subtitles off
+        // even though autoSubtitleForForeignAudio would have turned on
+        // German subs at load-time for the same audio choice.
+        let language = player.audioTracks.first(where: { $0.id == id })?.language
+        applyPreferredSubtitle(forAudioLanguage: language)
+    }
+
+    /// Resolves which subtitle track to surface, given the language of
+    /// the currently selected audio track:
+    ///
+    /// 1. Explicit `preferredSubtitleLanguage` always wins.
+    /// 2. Otherwise, if `autoSubtitleForForeignAudio` is on AND the
+    ///    audio isn't in the preferred audio language, surface subs in
+    ///    the preferred audio language — the "Netflix convention":
+    ///    German audio missing → English audio plays → German subs on
+    ///    top.
+    /// 3. No match → leave the current subtitle selection alone (the
+    ///    user may have picked one manually; we don't override it on
+    ///    a switch back to native audio).
+    private func applyPreferredSubtitle(forAudioLanguage audioLanguage: String?) {
+        if let explicit = preferences.preferredSubtitleLanguage {
+            if let match = subtitleStreams.first(where: { $0.language == explicit }) {
+                selectSubtitleTrack(id: match.index)
+            }
+            return
+        }
+        guard preferences.autoSubtitleForForeignAudio,
+              let preferredAudio = preferences.preferredAudioLanguage,
+              audioLanguage != preferredAudio
+        else { return }
+        if let match = subtitleStreams.first(where: { $0.language == preferredAudio }) {
+            selectSubtitleTrack(id: match.index)
+        }
     }
 
     // MARK: - Intro Skip
