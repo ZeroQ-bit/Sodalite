@@ -127,6 +127,17 @@ final class PlayerHostController: UIViewController {
             }
         }
 
+        // End-of-content auto-dismiss: a movie or the last episode of
+        // a series rolling its credits leaves a black-screen-with-no-
+        // focus state behind. Route it through the same dismissPlayer
+        // path the Menu button uses so the user lands back on the
+        // detail view they came from.
+        viewModel.onPlaybackReachedEnd = { [weak self] in
+            Task { @MainActor in
+                self?.dismissPlayer()
+            }
+        }
+
         // SwiftUI overlays (display-only). `.tint(...)` has to be
         // applied here because this hosted view lives in a UIKit modal —
         // the WindowGroup tint set on SodaliteApp never reaches it.

@@ -80,6 +80,13 @@ final class PlayerViewModel {
     var nextEpisode: JellyfinItem?
     var showNextEpisodeOverlay = false
     var nextEpisodeCountdown = 10
+    /// Fired once when playback hits demux EOF and there's no next
+    /// episode to advance to (movies, last episode of a season /
+    /// series). PlayerView wires this up to the same dismiss path the
+    /// Menu button takes — without it, the player sits on a black
+    /// frame with no focus target and the user has to mash Menu to
+    /// get back to the detail screen they came from.
+    var onPlaybackReachedEnd: (() -> Void)?
     var isCountdownActive = false
     var nextEpisodeTimer: Task<Void, Never>?
     var hasFetchedNextEpisode = false
@@ -391,6 +398,16 @@ final class PlayerViewModel {
                         let seconds = min(10, max(1, Int(ceil(max(0, remaining)))))
                         self.showNextEpisodeOverlay = true
                         self.startNextEpisodeCountdown(from: seconds)
+                    } else if self.hasStartedPlaying,
+                              self.nextEpisode == nil,
+                              !self.showNextEpisodeOverlay {
+                        // Real end-of-content: a movie just finished, or
+                        // the last episode of a series rolled credits.
+                        // Without this the player sits on a black frame
+                        // with no focus target — Menu still works to
+                        // exit, but the natural flow is to drop the user
+                        // back on the detail view they came from.
+                        self.onPlaybackReachedEnd?()
                     }
                 case .loading:
                     if !self.hasStartedPlaying { self.isLoading = true }
