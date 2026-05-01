@@ -142,6 +142,7 @@ struct MovieDetailView: View {
                     title: playButtonTitle(vm: vm),
                     systemImage: "play.fill",
                     isProminent: true,
+                    subtitle: resumeTimestamp(vm: vm),
                     action: {
                         playFromBeginning = false
                         showPlayer = true
@@ -206,6 +207,16 @@ struct MovieDetailView: View {
     private func playButtonTitle(vm: DetailViewModel) -> LocalizedStringKey {
         if hasProgress(vm: vm) { return "detail.resume" }
         return "detail.play"
+    }
+
+    /// Returns the formatted resume timestamp for the play-button
+    /// subtitle slot, or nil when there's nothing to resume from
+    /// (a fresh item, or an item that's already been finished).
+    private func resumeTimestamp(vm: DetailViewModel) -> String? {
+        guard let ticks = vm.item.userData?.playbackPositionTicks, ticks > 0 else {
+            return nil
+        }
+        return ResumeTimeFormatter.format(ticks: ticks)
     }
 
     private func episodeSubtitle(vm: DetailViewModel, seriesName: String) -> String {

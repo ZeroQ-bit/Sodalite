@@ -4,6 +4,12 @@ struct GlassActionButton: View {
     let title: LocalizedStringKey
     let systemImage: String
     var isProminent: Bool = false
+    /// Optional secondary line below the title — used by the detail-
+    /// view resume button to surface the resume timestamp ("12:34")
+    /// without changing the button's footprint dramatically. Renders
+    /// in caption2 + 0.75 opacity so it reads as supporting metadata,
+    /// not a competing label.
+    var subtitle: String? = nil
     let action: () -> Void
 
     var body: some View {
@@ -13,9 +19,21 @@ struct GlassActionButton: View {
             HStack(spacing: 10) {
                 Image(systemName: systemImage)
                     .font(.body)
-                Text(title)
-                    .font(.callout)
-                    .fontWeight(.medium)
+                if let subtitle, !subtitle.isEmpty {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(title)
+                            .font(.callout)
+                            .fontWeight(.medium)
+                        Text(subtitle)
+                            .font(.caption2)
+                            .foregroundStyle(.white.opacity(0.75))
+                            .monospacedDigit()
+                    }
+                } else {
+                    Text(title)
+                        .font(.callout)
+                        .fontWeight(.medium)
+                }
             }
             .padding(.horizontal, 24)
             .padding(.vertical, 12)

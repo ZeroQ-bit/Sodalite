@@ -239,6 +239,7 @@ struct SeriesDetailView: View {
                     title: playTitle,
                     systemImage: "play.fill",
                     isProminent: true,
+                    subtitle: resumeTimestamp(vm: vm),
                     action: {
                         let ep = selectedEpisode ?? vm.episodes.first(where: { $0.id == vm.currentEpisodeID }) ?? vm.episodes.first
                         if let ep {
@@ -295,6 +296,20 @@ struct SeriesDetailView: View {
             return "detail.resume"
         }
         return "detail.play"
+    }
+
+    /// Resume timestamp surfaced under the primary play button. Mirrors
+    /// the play-action's own pick: the explicitly-selected episode if
+    /// the user tapped one, otherwise the next-up episode the action
+    /// would actually start.
+    private func resumeTimestamp(vm: DetailViewModel) -> String? {
+        let target = selectedEpisode
+            ?? vm.episodes.first(where: { $0.id == vm.currentEpisodeID })
+            ?? vm.episodes.first
+        guard let ticks = target?.userData?.playbackPositionTicks, ticks > 0 else {
+            return nil
+        }
+        return ResumeTimeFormatter.format(ticks: ticks)
     }
 
     /// The "Request in Seerr" button only makes sense for series that
