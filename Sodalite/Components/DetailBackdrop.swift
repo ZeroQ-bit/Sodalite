@@ -44,10 +44,10 @@ struct DetailContentOverlay<Content: View>: View {
                 // (e.g. once "Anfrage gesendet" has replaced the
                 // request flow's tabs) doesn't leave the backdrop
                 // bleeding through with a hard gradient edge at the
-                // bottom of the screen.
+                // bottom of the screen. Sized large enough to push
+                // past any tvOS safe-area inset on a 4K display.
                 Color.black.frame(minHeight: 600)
             }
         }
-        .background(Color.black.ignoresSafeArea(edges: .bottom))
     }
 }
