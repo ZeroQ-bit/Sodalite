@@ -517,36 +517,6 @@ final class PlayerViewModel {
             }
             .store(in: &cancellables)
 
-        // Engine-decoded subtitles. Cues mirror into the view-model
-        // whenever the engine path is the active one; on the HTTP/
-        // sidecar path the engine cues stay empty and the host writes
-        // its own cues into `subtitleCues` after parsing the SRT.
-        player.$subtitleCues
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] cues in
-                guard let self else { return }
-                // Only mirror when an engine track is the active one.
-                // On the sidecar path the host has already populated
-                // `subtitleCues` from SRTParser and we don't want to
-                // wipe it with the engine's empty array.
-                let active = self.player.currentSubtitleStreamIndex
-                Self.subtitleLog.notice(
-                    "engine cues sink count=\(cues.count, privacy: .public) activeStream=\(active.map(String.init) ?? "nil", privacy: .public)"
-                )
-                if active != nil {
-                    self.subtitleCues = cues
-                }
-            }
-            .store(in: &cancellables)
-
-        player.$isLoadingSubtitles
-            .receive(on: DispatchQueue.main)
-            .sink { loading in
-                Self.subtitleLog.notice(
-                    "engine isLoadingSubtitles=\(loading, privacy: .public)"
-                )
-            }
-            .store(in: &cancellables)
     }
 
     // MARK: - Controls
@@ -781,58 +751,13 @@ final class PlayerViewModel {
     }
 
     func selectSubtitleTrack(id: Int?) {
-        guard let id else {
+        if let id {
+            activeSubtitleIndex = id
+            Task { await loadSubtitles(streamIndex: id) }
+        } else {
             activeSubtitleIndex = nil
             subtitleCues = []
-            player.clearSubtitle()
-            return
         }
-        activeSubtitleIndex = id
-        let stream = subtitleStreams.first(where: { $0.index == id })
-        let codec = stream?.codec
-        let isExternal = stream?.isExternal == true
-
-        // Engine-side decode only works when the stream we're playing
-        // is the original container (direct play / direct stream).
-        // Transcoded HLS doesn't carry the source subtitle stream at
-        // the same index — the server has rewritten the playlist —
-        // so for transcoded sessions we always fall back to HTTP.
-        let canUseEngine = activePlayMethod != .transcode
-        let useEngine = canUseEngine && !isExternal && Self.isTextSubtitleCodec(codec)
-
-        if useEngine {
-            Self.subtitleLog.notice(
-                "selectSubtitleTrack engine path streamIndex=\(id, privacy: .public) codec=\(codec ?? "nil", privacy: .public) playMethod=\(self.activePlayMethod.rawValue, privacy: .public)"
-            )
-            // Embedded text codec on a direct path — engine demuxes +
-            // decodes the stream client-side, no server extraction.
-            subtitleCues = []
-            player.selectSubtitleTrack(index: id)
-        } else {
-            Self.subtitleLog.notice(
-                "selectSubtitleTrack http path streamIndex=\(id, privacy: .public) codec=\(codec ?? "nil", privacy: .public) external=\(isExternal, privacy: .public) playMethod=\(self.activePlayMethod.rawValue, privacy: .public)"
-            )
-            // Sidecar, graphic codec, or transcoded session — let
-            // Jellyfin do the extraction/render and stream us SRT.
-            player.clearSubtitle()
-            subtitleCues = []
-            Task { await loadSubtitlesViaHTTP(streamIndex: id) }
-        }
-    }
-
-    /// Codecs the AetherEngine subtitle decoder handles natively.
-    /// Anything else falls back to the HTTP path so Jellyfin can
-    /// render bitmap subs (PGS/DVB) to image strips for us.
-    private static func isTextSubtitleCodec(_ codec: String?) -> Bool {
-        guard let c = codec?.lowercased() else { return false }
-        return [
-            "subrip", "srt",
-            "ass", "ssa",
-            "mov_text",
-            "webvtt", "vtt",
-            "subviewer",
-            "text",
-        ].contains(c)
     }
 
     private static let subtitleLog = Logger(
@@ -840,10 +765,10 @@ final class PlayerViewModel {
         category: "Subtitles"
     )
 
-    private func loadSubtitlesViaHTTP(streamIndex: Int) async {
+    private func loadSubtitles(streamIndex: Int) async {
         let stream = subtitleStreams.first(where: { $0.index == streamIndex })
         Self.subtitleLog.notice(
-            "loadSubtitlesViaHTTP streamIndex=\(streamIndex, privacy: .public) codec=\(stream?.codec ?? "nil", privacy: .public) lang=\(stream?.language ?? "nil", privacy: .public)"
+            "loadSubtitles streamIndex=\(streamIndex, privacy: .public) codec=\(stream?.codec ?? "nil", privacy: .public) lang=\(stream?.language ?? "nil", privacy: .public)"
         )
 
         guard let url = playbackService.buildSubtitleURL(
