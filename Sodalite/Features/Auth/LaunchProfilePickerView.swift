@@ -253,6 +253,13 @@ struct LaunchProfilePickerView: View {
 struct RememberedProfileCard: View {
     let user: RememberedUser
     let server: JellyfinServer
+    /// Set on the card representing the active session. Surfaces a
+    /// green checkmark badge on the avatar + a green idle ring so
+    /// the user can spot the current login at a glance — same row
+    /// of cards otherwise looks identical, and the previous
+    /// "Currently signed in" / "Switch profile" split-section UI
+    /// disappears in favour of a single grid.
+    var isCurrent: Bool = false
     let onSelect: () -> Void
     let onLongPress: () -> Void
 
@@ -305,11 +312,31 @@ struct RememberedProfileCard: View {
             }
         }
         .overlay(
+            // Subtle green idle ring on the active profile so it's
+            // recognisable even before the user moves focus over it.
+            // Suppressed when the user moves focus onto this card —
+            // the focus-tint ring takes over.
+            Circle()
+                .strokeBorder(.green, lineWidth: 4)
+                .padding(-3)
+                .opacity(isCurrent && !isFocused ? 0.85 : 0)
+        )
+        .overlay(
             Circle()
                 .strokeBorder(.tint, lineWidth: 3)
                 .padding(-3)
                 .opacity(isFocused ? 1 : 0)
         )
+        .overlay(alignment: .bottomTrailing) {
+            if isCurrent {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 36, weight: .bold))
+                    .symbolRenderingMode(.palette)
+                    .foregroundStyle(.white, .green)
+                    .background(Circle().fill(.black.opacity(0.6)).blur(radius: 4))
+                    .offset(x: 4, y: 4)
+            }
+        }
         .scaleEffect(isFocused ? 1.05 : 1.0)
         .shadow(color: .black.opacity(isFocused ? 0.4 : 0), radius: 20, y: 10)
         .animation(.easeInOut(duration: 0.15), value: isFocused)

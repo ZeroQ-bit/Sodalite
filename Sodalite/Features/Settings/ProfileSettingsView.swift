@@ -31,9 +31,7 @@ struct ProfileSettingsView: View {
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity)
 
-                currentProfileCard
-
-                otherProfilesSection
+                profilesGrid
 
                 addProfileButton
 
@@ -91,60 +89,28 @@ struct ProfileSettingsView: View {
         }
     }
 
-    // MARK: - Current
+    // MARK: - Profiles grid
 
-    private var currentProfileCard: some View {
-        VStack(spacing: 16) {
-            Text(String(
-                localized: "settings.profile.current",
-                defaultValue: "Currently signed in"
-            ))
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .textCase(.uppercase)
-
-            if let user = appState.activeUser, let server = appState.activeServer {
-                VStack(spacing: 12) {
-                    SettingsAvatar(
-                        user: user,
-                        server: server,
-                        diameter: 120
-                    )
-                    Text(user.name)
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                    Text(server.name)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .frame(maxWidth: .infinity)
-    }
-
-    // MARK: - Other profiles
-
+    /// All remembered profiles laid out side-by-side, with a green
+    /// check-badge on the one that's currently signed in. Replaces
+    /// the older "Currently signed in" + separate "Switch profile"
+    /// section split — single grid reads as the same picker the
+    /// app shows on cold launch, just with the active session
+    /// pre-marked.
     @ViewBuilder
-    private var otherProfilesSection: some View {
-        let others = rememberedUsers.filter { $0.id != appState.activeUser?.id }
-        if !others.isEmpty, let server = appState.activeServer {
-            VStack(spacing: 20) {
-                Text(String(
-                    localized: "settings.profile.switchTo",
-                    defaultValue: "Switch profile"
-                ))
-                .font(.headline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
+    private var profilesGrid: some View {
+        if !rememberedUsers.isEmpty, let server = appState.activeServer {
+            VStack(spacing: 16) {
                 Text(String(
                     localized: "settings.profile.switchTo.hint",
                     defaultValue: "Tap to switch without signing in again. Long-press to remove."
                 ))
                 .font(.caption)
                 .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: .infinity, alignment: .center)
+                .multilineTextAlignment(.center)
 
-                let columnCount = max(1, min(others.count, 4))
+                let columnCount = max(1, min(rememberedUsers.count, 4))
                 HStack(spacing: 0) {
                     Spacer(minLength: 0)
                     LazyVGrid(
@@ -154,12 +120,31 @@ struct ProfileSettingsView: View {
                         ),
                         spacing: 32
                     ) {
-                        ForEach(others) { user in
+                        ForEach(rememberedUsers) { user in
+                            let isCurrent = user.id == appState.activeUser?.id
                             RememberedProfileCard(
                                 user: user,
                                 server: server,
-                                onSelect: { switchTo(user, server: server) },
-                                onLongPress: { forget(user) }
+                                isCurrent: isCurrent,
+                                onSelect: {
+                                    // Tap on the active session is a
+                                    // no-op — staying signed in as the
+                                    // current user is the default state
+                                    // already.
+                                    guard !isCurrent else { return }
+                                    switchTo(user, server: server)
+                                },
+                                onLongPress: {
+                                    // Removing the active profile here
+                                    // would leave us authenticated as
+                                    // someone whose token was just
+                                    // forgotten. The Logout button
+                                    // covers that path; long-press
+                                    // remove only applies to the
+                                    // others.
+                                    guard !isCurrent else { return }
+                                    forget(user)
+                                }
                             )
                         }
                     }
@@ -167,7 +152,6 @@ struct ProfileSettingsView: View {
                 }
                 .focusSection()
             }
-            .padding(.top, 12)
         }
     }
 
