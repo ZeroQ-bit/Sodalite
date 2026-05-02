@@ -252,6 +252,7 @@ struct SeerrSettingsView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("settings.seerr.useJellyfin")
                         .font(.body)
+                        .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     Text("settings.seerr.useJellyfin.subtitle")
@@ -278,7 +279,12 @@ struct SeerrSettingsView: View {
                     .fill(.white.opacity(0.05))
             )
         }
-        .buttonStyle(.plain)
+        // GhostTileButtonStyle only adds the accent-tint focus stroke
+        // + lift; the button's existing background tile is preserved.
+        // .plain would tint the entire label and draw tvOS' default
+        // thick white halo, both of which fight the rest of the
+        // settings UI.
+        .buttonStyle(GhostTileButtonStyle())
     }
 
     private var passwordCachedNote: some View {

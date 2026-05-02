@@ -334,6 +334,34 @@ struct SettingsTileButtonStyle: ButtonStyle {
     }
 }
 
+/// Focus treatment only — accent-tint stroke, scale, shadow — without
+/// the default background fill. For buttons that already paint their
+/// own backdrop (e.g. SeerrSettings' Jellyfin-credentials toggle, with
+/// an internal "On / Off" badge and a translucent tile) but still
+/// want the rest of the app's focus look. The `.plain` button style
+/// would otherwise tint the label and surround it with tvOS' default
+/// thick white halo.
+struct GhostTileButtonStyle: ButtonStyle {
+    @Environment(\.isFocused) private var isFocused
+    @Environment(\.isEnabled) private var isEnabled
+    /// Corner radius of the focus stroke. Matches whatever rounded
+    /// shape the button's own label has chosen for its background.
+    var cornerRadius: CGFloat = 16
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .overlay(
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .strokeBorder(.tint, lineWidth: 3)
+                    .opacity(isFocused ? 1 : 0)
+            )
+            .scaleEffect(isFocused ? 1.03 : 1.0)
+            .shadow(color: .black.opacity(isFocused ? 0.3 : 0), radius: 15, y: 8)
+            .opacity(isEnabled ? 1.0 : 0.4)
+            .animation(.easeInOut(duration: 0.2), value: isFocused)
+    }
+}
+
 // MARK: - Playback Placeholder
 
 struct PlaybackSettingsPlaceholder: View {
