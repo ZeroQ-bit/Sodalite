@@ -43,6 +43,44 @@ struct SearchView: View {
             // without the user having to retype.
             viewModel?.scheduleSearch()
         }
+        // Pre-warm the poster cache as soon as either result list
+        // changes so the first focus on a card doesn't pay the
+        // round-trip + decode itself. Posters are tiny (typically
+        // <100 KB at our maxWidth=400 sizing); the prefetch runs
+        // bounded-concurrency so it doesn't starve the foreground
+        // UI of bandwidth.
+        .onChange(of: viewModel?.jellyfinResults) { _, _ in
+            prefetchSearchPosters()
+        }
+        .onChange(of: viewModel?.seerrResults) { _, _ in
+            prefetchSearchPosters()
+        }
+    }
+
+    /// Collect every poster URL the current results expose and hand
+    /// them to `ImageCache.prefetch`. Skips URLs already cached, so
+    /// running this on every results-change costs nothing for the
+    /// stable items between two queries — only the *new* posters
+    /// pay network.
+    private func prefetchSearchPosters() {
+        guard let vm = viewModel else { return }
+        var urls: [URL] = []
+        for item in vm.jellyfinResults {
+            if let url = dependencies.jellyfinImageService.posterURL(for: item) {
+                urls.append(url)
+            }
+        }
+        for media in vm.seerrResults {
+            if let url = SeerrImageURL.poster(path: media.posterPath) {
+                urls.append(url)
+            }
+        }
+        guard !urls.isEmpty else { return }
+        let token = dependencies.jellyfinClient.accessToken
+        let host = dependencies.jellyfinClient.baseURL?.host
+        Task.detached(priority: .utility) {
+            await ImageCache.prefetch(urls, authToken: token, jellyfinHost: host)
+        }
     }
 
     /// Inline search bar using a UIKit UITextField wrapper. Reason:

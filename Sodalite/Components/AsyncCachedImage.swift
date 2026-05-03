@@ -118,27 +118,36 @@ extension AsyncCachedImage where Placeholder == ProgressView<EmptyView, EmptyVie
 // MARK: - Cache
 
 final class ImageCache: @unchecked Sendable {
-    static let shared = ImageCache()
+    nonisolated(unsafe) static let shared = ImageCache()
 
-    private let cache = NSCache<NSURL, UIImage>()
+    // NSCache is documented thread-safe and the wrapper holds no
+    // Swift-level mutable state besides this — `nonisolated(unsafe)`
+    // lets the prefetch path call `store` from background tasks
+    // without round-tripping to MainActor per image.
+    nonisolated(unsafe) private let cache: NSCache<NSURL, UIImage>
 
-    private init() {
-        // Cost-based eviction. Each store carries its decoded byte
-        // size as cost, so NSCache auto-evicts when the total exceeds
-        // the limit — enough for a couple of fully-populated home
-        // rows plus a detail backdrop on a 4K display, but bounded so
-        // a long browsing session doesn't keep growing into hundreds
-        // of MB. countLimit stays generous so it's not the gating
-        // factor; the byte budget is what we care about.
+    /// Cost-based eviction. Each store carries its decoded byte
+    /// size as cost, so NSCache auto-evicts when the total exceeds
+    /// the limit — enough for a couple of fully-populated home
+    /// rows plus a detail backdrop on a 4K display, but bounded so
+    /// a long browsing session doesn't keep growing into hundreds
+    /// of MB. countLimit stays generous so it's not the gating
+    /// factor; the byte budget is what we care about.
+    nonisolated private init() {
+        let cache = NSCache<NSURL, UIImage>()
         cache.totalCostLimit = 150_000_000
         cache.countLimit = 1000
+        self.cache = cache
     }
 
-    func image(for url: URL) -> UIImage? {
+    // NSCache is documented thread-safe; both methods are nonisolated
+    // so the prefetch hot path can store results from off-actor tasks
+    // without paying a MainActor hop per image.
+    nonisolated func image(for url: URL) -> UIImage? {
         cache.object(forKey: url as NSURL)
     }
 
-    func store(_ image: UIImage, for url: URL) {
+    nonisolated func store(_ image: UIImage, for url: URL) {
         cache.setObject(image, forKey: url as NSURL, cost: estimatedBytes(for: image))
     }
 
@@ -153,9 +162,82 @@ final class ImageCache: @unchecked Sendable {
     /// Decoded size estimate: width × height × scale² × 4 bytes (RGBA8).
     /// Doesn't account for HDR/wide-gamut backing stores, but good
     /// enough as a cost signal for NSCache's eviction policy.
-    private func estimatedBytes(for image: UIImage) -> Int {
+    nonisolated private func estimatedBytes(for image: UIImage) -> Int {
         let scale = image.scale
         let pixels = image.size.width * scale * image.size.height * scale
         return Int(pixels) * 4
+    }
+}
+
+// MARK: - Prefetch
+
+extension ImageCache {
+    /// Warm the cache with a batch of URLs in the background. Skips
+    /// URLs already in the cache, fans out the rest with bounded
+    /// concurrency, and silently drops failures (a 404 on one
+    /// poster shouldn't disrupt the others). Intended for results
+    /// lists where the host knows about a set of URLs the user is
+    /// likely to focus shortly — search results, library grids,
+    /// next-episode hints — so the first focus doesn't hit
+    /// network/decode latency.
+    ///
+    /// `authToken` + `jellyfinHost` mirror the auth handling in
+    /// `AsyncCachedImage.load`: the X-Emby-Token header is attached
+    /// only for requests to the active Jellyfin host, so external
+    /// CDN URLs (TMDB posters etc) don't leak the token.
+    static func prefetch(
+        _ urls: [URL],
+        authToken: String?,
+        jellyfinHost: String?
+    ) async {
+        let pending = urls.filter { ImageCache.shared.image(for: $0) == nil }
+        guard !pending.isEmpty else { return }
+
+        await withTaskGroup(of: Void.self) { group in
+            // 6 in flight is enough to saturate a typical home LAN
+            // without pushing simultaneous foreground fetches off
+            // the wire — empirical sweet spot, the same number
+            // URLSession defaults to per host.
+            let maxConcurrent = 6
+            var iter = pending.makeIterator()
+
+            for _ in 0..<min(maxConcurrent, pending.count) {
+                guard let url = iter.next() else { break }
+                group.addTask {
+                    await prefetchOne(url: url, token: authToken, jfHost: jellyfinHost)
+                }
+            }
+            for await _ in group {
+                if let url = iter.next() {
+                    group.addTask {
+                        await prefetchOne(url: url, token: authToken, jfHost: jellyfinHost)
+                    }
+                }
+            }
+        }
+    }
+
+    nonisolated private static func prefetchOne(
+        url: URL,
+        token: String?,
+        jfHost: String?
+    ) async {
+        var request = URLRequest(url: url)
+        if let token, !token.isEmpty, url.host == jfHost {
+            request.setValue(token, forHTTPHeaderField: "X-Emby-Token")
+        }
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            guard let http = response as? HTTPURLResponse,
+                  (200...299).contains(http.statusCode),
+                  let image = UIImage(data: data)
+            else { return }
+            let prepared = image.preparingForDisplay() ?? image
+            ImageCache.shared.store(prepared, for: url)
+        } catch {
+            // Cache prefetch is best-effort — a transient failure
+            // just means the AsyncCachedImage on first focus pays
+            // the round-trip itself, same as without prefetch.
+        }
     }
 }
