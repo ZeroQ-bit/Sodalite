@@ -101,6 +101,44 @@ struct PlaybackSettingsView: View {
                         set: { prefs.autoSubtitleForForeignAudio = $0 }
                     )
                 )
+
+                sectionHeader("settings.playback.section.subtitleStyle")
+
+                valueRow(
+                    icon: "textformat.size",
+                    title: "settings.playback.subtitle.size",
+                    subtitle: "settings.playback.subtitle.size.subtitle",
+                    options: PlaybackPreferences.SubtitleFontSize.allCases,
+                    selection: Binding(
+                        get: { prefs.subtitleFontSize },
+                        set: { prefs.subtitleFontSize = $0 }
+                    ),
+                    label: { String(localized: String.LocalizationValue($0.titleKey)) }
+                )
+
+                valueRow(
+                    icon: "paintpalette",
+                    title: "settings.playback.subtitle.color",
+                    subtitle: "settings.playback.subtitle.color.subtitle",
+                    options: PlaybackPreferences.SubtitleColor.allCases,
+                    selection: Binding(
+                        get: { prefs.subtitleColor },
+                        set: { prefs.subtitleColor = $0 }
+                    ),
+                    label: { String(localized: String.LocalizationValue($0.titleKey)) }
+                )
+
+                valueRow(
+                    icon: "rectangle.fill",
+                    title: "settings.playback.subtitle.background",
+                    subtitle: "settings.playback.subtitle.background.subtitle",
+                    options: PlaybackPreferences.SubtitleBackground.allCases,
+                    selection: Binding(
+                        get: { prefs.subtitleBackground },
+                        set: { prefs.subtitleBackground = $0 }
+                    ),
+                    label: { String(localized: String.LocalizationValue($0.titleKey)) }
+                )
             }
             .padding(.horizontal, 80)
             .padding(.top, 60)

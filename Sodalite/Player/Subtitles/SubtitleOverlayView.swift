@@ -14,6 +14,15 @@ import AetherEngine
 struct SubtitleOverlayView: View {
     let cues: [SubtitleCue]
     let currentTime: Double
+    /// User-selected text size — applied as a multiplier on top of the
+    /// base `.title3` font. Picked up from PlaybackPreferences.
+    let fontSize: PlaybackPreferences.SubtitleFontSize
+    /// User-selected foreground colour for text cues. Bitmap cues
+    /// (PGS / DVB) ignore this — the colour is baked into the
+    /// graphic by the source.
+    let textColor: PlaybackPreferences.SubtitleColor
+    /// Background style for text cues (box / outline / none).
+    let background: PlaybackPreferences.SubtitleBackground
 
     var body: some View {
         GeometryReader { geo in
@@ -48,19 +57,80 @@ struct SubtitleOverlayView: View {
         // ~80pt safe-area gap. Width is capped so long lines wrap
         // with horizontal margins on either side.
         let maxWidth = max(0, size.width - 240)
-        return Text(text)
-            .font(.title3)
-            .fontWeight(.medium)
-            .foregroundStyle(.white)
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
-            .background(.black.opacity(0.6), in: RoundedRectangle(cornerRadius: 8))
+        // tvOS .title3 lands around 24-29pt depending on platform
+        // metrics; the user-selected scale multiplies that for
+        // small/medium/large/xlarge.
+        let basePoints: CGFloat = 28
+        let pointSize = basePoints * fontSize.scale
+        return styledText(text, pointSize: pointSize)
             .frame(maxWidth: maxWidth)
             .frame(width: size.width, alignment: .center)
             .position(x: size.width / 2, y: size.height - 100)
             .transition(.opacity)
     }
+
+    /// Compose the text view itself — font + colour + the chosen
+    /// background style (box / outline / none). Outline is drawn by
+    /// stacking eight nudged copies in black behind the foreground
+    /// text; the system has no per-character stroke modifier on tvOS.
+    @ViewBuilder
+    private func styledText(_ text: String, pointSize: CGFloat) -> some View {
+        let foreground = foregroundColor
+        let baseFont = Font.system(size: pointSize, weight: .semibold)
+
+        switch background {
+        case .box:
+            Text(text)
+                .font(baseFont)
+                .foregroundStyle(foreground)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .background(.black.opacity(0.6), in: RoundedRectangle(cornerRadius: 8))
+        case .outline:
+            ZStack {
+                ForEach(outlineOffsets, id: \.self) { offset in
+                    Text(text)
+                        .font(baseFont)
+                        .foregroundStyle(.black)
+                        .multilineTextAlignment(.center)
+                        .offset(x: offset.x, y: offset.y)
+                }
+                Text(text)
+                    .font(baseFont)
+                    .foregroundStyle(foreground)
+                    .multilineTextAlignment(.center)
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 6)
+        case .none:
+            Text(text)
+                .font(baseFont)
+                .foregroundStyle(foreground)
+                .multilineTextAlignment(.center)
+                .shadow(color: .black.opacity(0.85), radius: 3, x: 0, y: 1)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 6)
+        }
+    }
+
+    private var foregroundColor: Color {
+        switch textColor {
+        case .white: return .white
+        case .yellow: return Color(red: 1.0, green: 0.86, blue: 0.0)
+        case .gray: return Color(white: 0.85)
+        }
+    }
+
+    /// Eight-direction offsets for the outline-style background. Two
+    /// pixels at TV viewing distance reads as a solid edge without
+    /// looking like a dropshadow.
+    private static let outlineOffsets: [CGPoint] = [
+        CGPoint(x: -2, y: -2), CGPoint(x: 0, y: -2), CGPoint(x: 2, y: -2),
+        CGPoint(x: -2, y:  0),                       CGPoint(x: 2, y:  0),
+        CGPoint(x: -2, y:  2), CGPoint(x: 0, y:  2), CGPoint(x: 2, y:  2),
+    ]
+    private var outlineOffsets: [CGPoint] { Self.outlineOffsets }
 
     // MARK: - Image branch
 

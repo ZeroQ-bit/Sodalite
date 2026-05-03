@@ -714,7 +714,10 @@ private struct PlayerOverlayView: View {
             if !viewModel.subtitleCues.isEmpty {
                 SubtitleOverlayView(
                     cues: viewModel.subtitleCues,
-                    currentTime: viewModel.playbackTime
+                    currentTime: viewModel.playbackTime,
+                    fontSize: viewModel.preferences.subtitleFontSize,
+                    textColor: viewModel.preferences.subtitleColor,
+                    background: viewModel.preferences.subtitleBackground
                 )
             }
 

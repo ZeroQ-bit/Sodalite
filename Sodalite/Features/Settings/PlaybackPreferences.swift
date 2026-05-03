@@ -1,4 +1,5 @@
 import Foundation
+import CoreGraphics
 import Observation
 
 /// Device-local playback preferences. Backed by `UserDefaults` so they
@@ -23,6 +24,9 @@ final class PlaybackPreferences {
         static let autoSkipIntro = "playback.autoSkipIntro"
         static let autoSkipOutro = "playback.autoSkipOutro"
         static let autoSubtitleForForeignAudio = "playback.autoSubtitleForForeignAudio"
+        static let subtitleFontSize = "playback.subtitleFontSize"
+        static let subtitleColor = "playback.subtitleColor"
+        static let subtitleBackground = "playback.subtitleBackground"
     }
 
     // MARK: - Allowed Values
@@ -90,6 +94,44 @@ final class PlaybackPreferences {
         let titleKey: String
     }
 
+    /// Subtitle text size relative to the default. Used for both
+    /// the engine's text-cue overlay and the legacy SRTParser path.
+    enum SubtitleFontSize: String, CaseIterable, Sendable, Identifiable {
+        case small, medium, large, xlarge
+        var id: String { rawValue }
+        var titleKey: String { "settings.playback.subtitle.size.\(rawValue)" }
+        /// Multiplier applied to the base font size (`.title3` ≈ 24pt).
+        var scale: CGFloat {
+            switch self {
+            case .small: return 0.85
+            case .medium: return 1.0
+            case .large: return 1.2
+            case .xlarge: return 1.45
+            }
+        }
+    }
+
+    /// Foreground colour for subtitle text. Three options that cover
+    /// the tracks people actually mix and match (white = default,
+    /// yellow = accessibility / Disney-style, grey = soften
+    /// against bright HDR scenes).
+    enum SubtitleColor: String, CaseIterable, Sendable, Identifiable {
+        case white, yellow, gray
+        var id: String { rawValue }
+        var titleKey: String { "settings.playback.subtitle.color.\(rawValue)" }
+    }
+
+    /// How the subtitle text reads against the video frame. Box is the
+    /// classic semi-transparent black backing; outline draws a thin
+    /// stroke around the glyphs without a fill (best when the video
+    /// has heavy contrast already); none is naked text (for users who
+    /// don't want anything obscuring the picture).
+    enum SubtitleBackground: String, CaseIterable, Sendable, Identifiable {
+        case box, outline, none
+        var id: String { rawValue }
+        var titleKey: String { "settings.playback.subtitle.background.\(rawValue)" }
+    }
+
     // MARK: - Properties
 
     var autoplayNextEpisode: Bool {
@@ -129,6 +171,18 @@ final class PlaybackPreferences {
         didSet { store.set(autoSubtitleForForeignAudio, forKey: Keys.autoSubtitleForForeignAudio) }
     }
 
+    var subtitleFontSize: SubtitleFontSize {
+        didSet { store.set(subtitleFontSize.rawValue, forKey: Keys.subtitleFontSize) }
+    }
+
+    var subtitleColor: SubtitleColor {
+        didSet { store.set(subtitleColor.rawValue, forKey: Keys.subtitleColor) }
+    }
+
+    var subtitleBackground: SubtitleBackground {
+        didSet { store.set(subtitleBackground.rawValue, forKey: Keys.subtitleBackground) }
+    }
+
     // MARK: - Init
 
     private let store: UserDefaults
@@ -143,5 +197,11 @@ final class PlaybackPreferences {
         self.preferredAudioLanguage = store.string(forKey: Keys.preferredAudioLanguage)
         self.preferredSubtitleLanguage = store.string(forKey: Keys.preferredSubtitleLanguage)
         self.autoSubtitleForForeignAudio = store.object(forKey: Keys.autoSubtitleForForeignAudio) as? Bool ?? true
+        self.subtitleFontSize = (store.string(forKey: Keys.subtitleFontSize))
+            .flatMap(SubtitleFontSize.init(rawValue:)) ?? .medium
+        self.subtitleColor = (store.string(forKey: Keys.subtitleColor))
+            .flatMap(SubtitleColor.init(rawValue:)) ?? .white
+        self.subtitleBackground = (store.string(forKey: Keys.subtitleBackground))
+            .flatMap(SubtitleBackground.init(rawValue:)) ?? .box
     }
 }
