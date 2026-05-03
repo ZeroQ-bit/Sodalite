@@ -139,6 +139,26 @@ struct PlaybackSettingsView: View {
                     ),
                     label: { String(localized: String.LocalizationValue($0.titleKey)) }
                 )
+
+                valueRow(
+                    icon: "metronome",
+                    title: "settings.playback.subtitle.delay",
+                    subtitle: "settings.playback.subtitle.delay.subtitle",
+                    options: PlaybackPreferences.subtitleDelayChoices,
+                    selection: Binding(
+                        get: {
+                            // Snap the persisted value to the nearest
+                            // option so a stale value from a previous
+                            // version doesn't render as a no-op picker.
+                            let stored = prefs.subtitleDelaySeconds
+                            return PlaybackPreferences.subtitleDelayChoices
+                                .min(by: { abs($0 - stored) < abs($1 - stored) })
+                                ?? 0
+                        },
+                        set: { prefs.subtitleDelaySeconds = $0 }
+                    ),
+                    label: PlaybackSettingsView.formatSubtitleDelay
+                )
             }
             .padding(.horizontal, 80)
             .padding(.top, 60)
@@ -208,6 +228,27 @@ struct PlaybackSettingsView: View {
             selection: selection,
             label: label
         )
+    }
+
+    /// Format a subtitle-delay value for the picker chip. Uses the
+    /// proper Unicode minus sign (−, U+2212) rather than the hyphen
+    /// for typography parity with the on-screen "+" sign, and trims
+    /// trailing zeroes ("0.5 s" instead of "0.50 s").
+    static func formatSubtitleDelay(_ seconds: Double) -> String {
+        if seconds == 0 {
+            return "0 s"
+        }
+        let abs = Swift.abs(seconds)
+        let formatted: String
+        if abs == abs.rounded() {
+            formatted = "\(Int(abs))"
+        } else {
+            formatted = String(format: "%.2f", abs)
+                .replacingOccurrences(of: #"0+$"#, with: "", options: .regularExpression)
+                .replacingOccurrences(of: #"\.$"#, with: "", options: .regularExpression)
+        }
+        let sign = seconds < 0 ? "\u{2212}" : "+"
+        return "\(sign)\(formatted) s"
     }
 
     private func languageRow(

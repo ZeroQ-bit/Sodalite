@@ -23,6 +23,11 @@ struct SubtitleOverlayView: View {
     let textColor: PlaybackPreferences.SubtitleColor
     /// Background style for text cues (box / outline / none).
     let background: PlaybackPreferences.SubtitleBackground
+    /// Subtitle timing offset in seconds. Positive = subs appear later
+    /// than the audio they translate; negative = subs appear earlier.
+    /// Applied to both text and image cues so the user's setting works
+    /// regardless of which decoder produced the cue.
+    let delaySeconds: Double
 
     var body: some View {
         GeometryReader { geo in
@@ -161,10 +166,16 @@ struct SubtitleOverlayView: View {
     /// now and walk back collecting any whose endTime hasn't passed.
     private var activeCues: [SubtitleCue] {
         guard !cues.isEmpty else { return [] }
+        // Apply user's delay offset. delay > 0 means subs should
+        // appear LATER than they would by default, so the cue at
+        // [10..12] is "perceived" as [11..13] for delay = +1.
+        // Equivalently, look up at (currentTime - delay) — at audio
+        // time 11.0 we want the cue whose intrinsic start was 10.0.
+        let lookupTime = currentTime - delaySeconds
         var lo = 0, hi = cues.count
         while lo < hi {
             let mid = (lo + hi) / 2
-            if cues[mid].startTime > currentTime {
+            if cues[mid].startTime > lookupTime {
                 hi = mid
             } else {
                 lo = mid + 1
@@ -172,8 +183,8 @@ struct SubtitleOverlayView: View {
         }
         var result: [SubtitleCue] = []
         var i = lo - 1
-        while i >= 0, cues[i].startTime <= currentTime {
-            if cues[i].endTime >= currentTime {
+        while i >= 0, cues[i].startTime <= lookupTime {
+            if cues[i].endTime >= lookupTime {
                 result.append(cues[i])
             }
             i -= 1

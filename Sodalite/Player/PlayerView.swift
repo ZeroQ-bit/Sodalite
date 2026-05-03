@@ -717,7 +717,8 @@ private struct PlayerOverlayView: View {
                     currentTime: viewModel.playbackTime,
                     fontSize: viewModel.preferences.subtitleFontSize,
                     textColor: viewModel.preferences.subtitleColor,
-                    background: viewModel.preferences.subtitleBackground
+                    background: viewModel.preferences.subtitleBackground,
+                    delaySeconds: viewModel.preferences.subtitleDelaySeconds
                 )
             }
 

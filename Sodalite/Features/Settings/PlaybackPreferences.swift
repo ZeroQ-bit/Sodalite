@@ -27,6 +27,7 @@ final class PlaybackPreferences {
         static let subtitleFontSize = "playback.subtitleFontSize"
         static let subtitleColor = "playback.subtitleColor"
         static let subtitleBackground = "playback.subtitleBackground"
+        static let subtitleDelaySeconds = "playback.subtitleDelaySeconds"
     }
 
     // MARK: - Allowed Values
@@ -34,6 +35,15 @@ final class PlaybackPreferences {
     /// 0 = disabled (countdown doesn't appear), otherwise countdown seconds.
     static let countdownChoices: [Int] = [0, 5, 10, 15]
     static let skipIntervalChoices: [Int] = [5, 10, 15, 30]
+
+    /// Subtitle-delay choices in seconds. Negative shifts subs *earlier*
+    /// (they appear before the audio line they're translating); positive
+    /// shifts them *later*. Step density is finer near zero where most
+    /// real-world out-of-sync issues land — wider steps further out for
+    /// the rare badly-muxed track.
+    static let subtitleDelayChoices: [Double] = [
+        -5, -3, -2, -1.5, -1, -0.5, -0.25, 0, 0.25, 0.5, 1, 1.5, 2, 3, 5
+    ]
 
     /// Shared language options — alphabetical by display name. ISO 639-2/B
     /// bibliographic codes (Jellyfin's convention: "deu" not "ger", "cze"
@@ -189,6 +199,16 @@ final class PlaybackPreferences {
         didSet { store.set(subtitleBackground.rawValue, forKey: Keys.subtitleBackground) }
     }
 
+    /// Offset applied to subtitle cue timing when rendering. Positive
+    /// values delay the subtitle (it appears *after* the corresponding
+    /// audio); negative values pull it forward. Applied in
+    /// `SubtitleOverlayView` as `effectiveTime = currentTime - delay`,
+    /// so a single value covers both the engine streaming path and
+    /// the legacy HTTP/SRTParser fallback.
+    var subtitleDelaySeconds: Double {
+        didSet { store.set(subtitleDelaySeconds, forKey: Keys.subtitleDelaySeconds) }
+    }
+
     // MARK: - Init
 
     private let store: UserDefaults
@@ -209,5 +229,6 @@ final class PlaybackPreferences {
             .flatMap(SubtitleColor.init(rawValue:)) ?? .white
         self.subtitleBackground = (store.string(forKey: Keys.subtitleBackground))
             .flatMap(SubtitleBackground.init(rawValue:)) ?? .box
+        self.subtitleDelaySeconds = store.object(forKey: Keys.subtitleDelaySeconds) as? Double ?? 0
     }
 }
