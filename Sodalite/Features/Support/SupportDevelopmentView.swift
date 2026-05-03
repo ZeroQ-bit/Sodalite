@@ -442,17 +442,10 @@ private struct SupporterPackRow: View {
             Task { await action() }
         } label: {
             HStack(spacing: 28) {
-                Group {
-                    if isUnlocked {
-                        Image(systemName: "star.circle.fill")
-                            .foregroundStyle(.yellow)
-                    } else {
-                        Image(systemName: "star.circle")
-                            .foregroundStyle(.tint)
-                    }
-                }
-                .font(.title2)
-                .frame(width: 56)
+                Image(systemName: isUnlocked ? "star.circle.fill" : "star.circle")
+                    .foregroundStyle(.yellow)
+                    .font(.title2)
+                    .frame(width: 56)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(product?.displayName ?? String(
