@@ -13,6 +13,78 @@ import Foundation
 /// previously affected behaviour.
 enum Changelog {
     static let entries: [ChangelogEntry] = [
+        // MARK: 0.5.0
+        ChangelogEntry(
+            version: "0.5.0",
+            highlights: [
+                ChangelogHighlight(
+                    .new,
+                    "changelog.0_5_0.dolbyVision.title",
+                    "changelog.0_5_0.dolbyVision.body",
+                    icon: "tv.fill"
+                ),
+                ChangelogHighlight(
+                    .new,
+                    "changelog.0_5_0.hdr10Plus.title",
+                    "changelog.0_5_0.hdr10Plus.body",
+                    icon: "sun.max.fill"
+                ),
+                ChangelogHighlight(
+                    .new,
+                    "changelog.0_5_0.subtitleRework.title",
+                    "changelog.0_5_0.subtitleRework.body",
+                    icon: "captions.bubble.fill"
+                ),
+                ChangelogHighlight(
+                    .new,
+                    "changelog.0_5_0.chapterMarkers.title",
+                    "changelog.0_5_0.chapterMarkers.body",
+                    icon: "list.dash"
+                ),
+                ChangelogHighlight(
+                    .improve,
+                    "changelog.0_5_0.errorCategories.title",
+                    "changelog.0_5_0.errorCategories.body",
+                    icon: "exclamationmark.triangle.fill"
+                ),
+                ChangelogHighlight(
+                    .improve,
+                    "changelog.0_5_0.pictureSpeed.title",
+                    "changelog.0_5_0.pictureSpeed.body",
+                    icon: "rectangle.expand.vertical"
+                ),
+                ChangelogHighlight(
+                    .improve,
+                    "changelog.0_5_0.touchpadAccuracy.title",
+                    "changelog.0_5_0.touchpadAccuracy.body",
+                    icon: "hand.tap.fill"
+                ),
+                ChangelogHighlight(
+                    .improve,
+                    "changelog.0_5_0.foregroundReload.title",
+                    "changelog.0_5_0.foregroundReload.body",
+                    icon: "arrow.clockwise"
+                ),
+                ChangelogHighlight(
+                    .fix,
+                    "changelog.0_5_0.staleSubtitleGhost.title",
+                    "changelog.0_5_0.staleSubtitleGhost.body",
+                    icon: "captions.bubble"
+                ),
+                ChangelogHighlight(
+                    .fix,
+                    "changelog.0_5_0.supporterIcon.title",
+                    "changelog.0_5_0.supporterIcon.body",
+                    icon: "star.circle.fill"
+                ),
+                ChangelogHighlight(
+                    .fix,
+                    "changelog.0_5_0.uiAutoHide.title",
+                    "changelog.0_5_0.uiAutoHide.body",
+                    icon: "eye.slash.fill"
+                ),
+            ]
+        ),
         // MARK: 0.4.1
         ChangelogEntry(
             version: "0.4.1",
