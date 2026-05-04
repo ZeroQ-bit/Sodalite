@@ -23,7 +23,7 @@ struct FilteredGridView: View {
     /// Stable identifier used by FilterCache to persist the final
     /// merged item list. Independent of `smartProviderID` so even
     /// providers without a watch-provider concept (broadcast nets
-    /// like ABC / NBC / CBS) still get their result cached — and
+    /// like ABC / NBC / CBS) still get their result cached, and
     /// therefore become eligible for the empty-tile-hide pass on
     /// the next visit.
     let cacheKey: String?
@@ -43,7 +43,7 @@ struct FilteredGridView: View {
         // Hydrate from FilterCache during init so the very first
         // body render already paints the cached grid. Doing it
         // inside `.task` later means one frame with isLoading=true
-        // before the cache snaps in — that's the brief "loading
+        // before the cache snaps in, that's the brief "loading
         // flash" the user perceives on every tap.
         if let key = cacheKey,
            let cached = FilterCache.shared.homeFilterItems(filterKey: key),
@@ -119,14 +119,14 @@ struct FilteredGridView: View {
         .task {
             await loadItems()
             // Nudge focus to the first item only on the very first
-            // appearance — if the user has already navigated by the
+            // appearance, if the user has already navigated by the
             // time loadItems returns (cache hit + Phase 2 augment
             // can take a couple of seconds during which they're
             // free to scroll), forcing focus back to position 0
             // would yank them out of where they are.
             guard focusedItemID == nil, let firstID = items.first?.id else { return }
             deferOnMain(by: 0.1) {
-                // Recheck at fire time — the user could have moved
+                // Recheck at fire time, the user could have moved
                 // focus during the 100 ms gap.
                 if focusedItemID == nil {
                     focusedItemID = firstID
@@ -143,7 +143,7 @@ struct FilteredGridView: View {
     private func loadItems() async {
         guard let userID = appState.activeUser?.id else { return }
 
-        // Cache hydration happened in init(...) — items + isLoading
+        // Cache hydration happened in init(...), items + isLoading
         // already reflect the cache hit (or miss). Now run the
         // background refresh that replaces them with the freshest
         // server response.
@@ -193,7 +193,7 @@ struct FilteredGridView: View {
             isLoading = false
         }
 
-        // Always refresh — the cache is stale-while-revalidate. The
+        // Always refresh, the cache is stale-while-revalidate. The
         // fresh list replaces whatever the cache held, so titles that
         // rotated off the service since last visit drop out.
         if let providerID = smartProviderID, let region = smartProviderRegion {
@@ -204,7 +204,7 @@ struct FilteredGridView: View {
             )
         } else {
             // No smart filter (broadcast networks, generic genre /
-            // studio tiles) — Phase 1 is the final result. Persist
+            // studio tiles), Phase 1 is the final result. Persist
             // it so the empty-tile-hide pass on the next visit has
             // a count to work with, and so a re-tap renders without
             // the studio-query roundtrip. Skip the assignment when
@@ -262,7 +262,7 @@ struct FilteredGridView: View {
         }
 
         // Persist the fully-resolved list so the next visit can
-        // hydrate the grid synchronously — no library fetch, no
+        // hydrate the grid synchronously, no library fetch, no
         // watch-provider roundtrip needed for the initial display.
         if let key = cacheKey {
             FilterCache.shared.setHomeFilterItems(merged, filterKey: key)

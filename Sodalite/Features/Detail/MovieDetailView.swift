@@ -15,7 +15,7 @@ struct MovieDetailView: View {
 
     var body: some View {
         ZStack {
-            // Solid black underneath the loading state — see
+            // Solid black underneath the loading state, see
             // SeriesDetailView. The contentView already paints its
             // own backdrop, so this only shows through during load.
             Color.black.ignoresSafeArea()

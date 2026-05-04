@@ -9,12 +9,12 @@ import os
 /// and our custom tvOS-style player UI.
 ///
 /// Uses Combine subscriptions to observe AetherEngine's @Published
-/// properties instead of polling timers — eliminates AttributeGraph cycles.
+/// properties instead of polling timers, eliminates AttributeGraph cycles.
 ///
 /// Split into extensions:
-/// - `PlayerViewModel+Scrubbing.swift` — pan/arrow scrubbing
-/// - `PlayerViewModel+NextEpisode.swift` — auto-play next episode
-/// - `PlayerViewModel+SessionReporting.swift` — Jellyfin progress reports
+/// - `PlayerViewModel+Scrubbing.swift`, pan/arrow scrubbing
+/// - `PlayerViewModel+NextEpisode.swift`, auto-play next episode
+/// - `PlayerViewModel+SessionReporting.swift`, Jellyfin progress reports
 @Observable
 @MainActor
 final class PlayerViewModel {
@@ -23,7 +23,7 @@ final class PlayerViewModel {
 
     var isLoading = true
     var errorMessage: String?
-    /// Icon (SF Symbol) chosen for the active error — set together
+    /// Icon (SF Symbol) chosen for the active error, set together
     /// with `errorMessage` via `setError(from:)`. nil when no error.
     var errorIcon: String?
     /// Localised headline for the active error (e.g. "Connection
@@ -77,7 +77,7 @@ final class PlayerViewModel {
     var isDropdownOpen: Bool { trackDropdown != .none }
 
     /// Playback speed choices. Native tvOS player uses the same stepped
-    /// set — keeping it consistent with user expectations. Index 2 = 1.0×.
+    /// set, keeping it consistent with user expectations. Index 2 = 1.0×.
     static let speedOptions: [Float] = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0]
     /// Index into `speedOptions` for the currently applied rate.
     var activeSpeedIndex: Int = 2
@@ -92,7 +92,7 @@ final class PlayerViewModel {
     /// transport bar can offer an in-season episode picker without
     /// the user having to back out to the series detail screen.
     /// Stays empty for movies, single-episode series, and any item
-    /// without a parent season — TransportBar suppresses the button
+    /// without a parent season, TransportBar suppresses the button
     /// when count <= 1.
     var seasonEpisodes: [JellyfinItem] = []
 
@@ -100,14 +100,14 @@ final class PlayerViewModel {
     /// startPlayback from `item.chapters`. Sorted by start position
     /// so the scrub-bar overlay can iterate without re-sorting and
     /// the chapter dropdown lists them in playback order. Empty when
-    /// the file ships no chapters — TransportBar suppresses the
+    /// the file ships no chapters, TransportBar suppresses the
     /// button when count <= 1.
     var chapters: [ChapterInfo] = []
 
     /// Picture-fill mode for the currently active session. Initialised
     /// at `startPlayback` from the user's `PlaybackPreferences.pictureMode`,
     /// then mutable on the fly via `selectPictureMode`. Doesn't write
-    /// back to prefs — the in-player picker is treated as a transient
+    /// back to prefs, the in-player picker is treated as a transient
     /// override for this playback only, the settings screen owns the
     /// global default.
     var pictureMode: PlaybackPreferences.PictureMode = .original
@@ -122,7 +122,7 @@ final class PlayerViewModel {
     /// Fired once when playback hits demux EOF and there's no next
     /// episode to advance to (movies, last episode of a season /
     /// series). PlayerView wires this up to the same dismiss path the
-    /// Menu button takes — without it, the player sits on a black
+    /// Menu button takes, without it, the player sits on a black
     /// frame with no focus target and the user has to mash Menu to
     /// get back to the detail screen they came from.
     var onPlaybackReachedEnd: (() -> Void)?
@@ -131,7 +131,7 @@ final class PlayerViewModel {
     var hasFetchedNextEpisode = false
     var nextEpisodeCancelled = false
 
-    // Intro skip + outro-aware next-episode trigger — both populated
+    // Intro skip + outro-aware next-episode trigger, both populated
     // from Jellyfin Media Segments / intro-skipper plugin in one call.
     var introSegment: MediaSegment?
     var outroSegment: MediaSegment?
@@ -139,7 +139,7 @@ final class PlayerViewModel {
     /// Skip Intro button whenever this is true, regardless of whether
     /// the transport controls are open.
     var isInsideIntro: Bool = false
-    /// Set once per episode after an auto-skip fires — keeps the time
+    /// Set once per episode after an auto-skip fires, keeps the time
     /// subscriber from re-triggering the skip in the brief window before
     /// the seek actually moves currentTime past introEnd.
     var didAutoSkipCurrentIntro: Bool = false
@@ -168,7 +168,7 @@ final class PlayerViewModel {
     var controlsTimer: Task<Void, Never>?
     var hasReportedStart = false
     var hasStartedPlaying = false
-    /// The position we resumed from — used as minimum for progress reports
+    /// The position we resumed from, used as minimum for progress reports
     /// to prevent Jellyfin from resetting progress when stopping early.
     var resumePositionTicks: Int64 = 0
     var mediaSourceID: String = ""
@@ -200,12 +200,12 @@ final class PlayerViewModel {
         clearError()
         // Source-container chapters are already on the item if the
         // detail fetch requested the Chapters field. Sort defensively
-        // — the API documents start-position order but a few legacy
+        //, the API documents start-position order but a few legacy
         // taggers emit them out of sequence.
         chapters = (item.chapters ?? [])
             .sorted { $0.startPositionTicks < $1.startPositionTicks }
         // Reset the picture mode to the user's global default for
-        // each new playback session — in-player overrides shouldn't
+        // each new playback session, in-player overrides shouldn't
         // bleed across episodes / movies.
         pictureMode = preferences.pictureMode
         applyPictureMode()
@@ -239,8 +239,8 @@ final class PlayerViewModel {
             #endif
 
             // Filter subtitle streams:
-            // 1. Exclude image-based formats (PGS, VOBSUB) — can't convert to text
-            // 2. Drop forced tracks — they only cover foreign-dialogue
+            // 1. Exclude image-based formats (PGS, VOBSUB), can't convert to text
+            // 2. Drop forced tracks, they only cover foreign-dialogue
             //    segments inside an otherwise-understood audio track, so
             //    users rarely want them on; keeping them also poisons the
             //    preferred-language auto-select (a forced "deu" beats a
@@ -250,7 +250,7 @@ final class PlayerViewModel {
             // here because the legacy server-extraction path couldn't
             // produce SRT for them. The engine renders them as CGImage
             // now, so they belong in the picker. "Forced" tracks also
-            // stay in the list — many releases mark every subtitle
+            // stay in the list, many releases mark every subtitle
             // track as forced and we'd otherwise leave the user with
             // an empty dropdown for a file that obviously has subs.
             // The dedupe step below uses `forced` / `signs` / `sdh` /
@@ -321,7 +321,7 @@ final class PlayerViewModel {
                 resumePositionTicks = 0
             }
 
-            // Set display criteria BEFORE loading — the TV needs time to switch
+            // Set display criteria BEFORE loading, the TV needs time to switch
             // to HDR/DV mode before the first frame is decoded. Use Jellyfin's
             // mediaStreams metadata for detection (available before decode).
             //
@@ -388,7 +388,7 @@ final class PlayerViewModel {
             await reportStart()
             startProgressReporting()
 
-            // Fetch intro marker in the background — don't block
+            // Fetch intro marker in the background, don't block
             // playback start if the server is slow or doesn't expose
             // the endpoint. Once the marker lands the next time tick
             // will flip isInsideIntro on naturally.
@@ -444,7 +444,7 @@ final class PlayerViewModel {
                     self.isPlaying = false
                 case .idle:
                     self.isPlaying = false
-                    // Demux EOF — safety net countdown start for cases
+                    // Demux EOF, safety net countdown start for cases
                     // where player.$currentTime never fires near the
                     // end (Combine only emits on value changes, and
                     // the demux's 15–20 s look-ahead means currentTime
@@ -465,7 +465,7 @@ final class PlayerViewModel {
                         // Real end-of-content: a movie just finished, or
                         // the last episode of a series rolled credits.
                         // Without this the player sits on a black frame
-                        // with no focus target — Menu still works to
+                        // with no focus target, Menu still works to
                         // exit, but the natural flow is to drop the user
                         // back on the detail view they came from.
                         self.onPlaybackReachedEnd?()
@@ -498,14 +498,14 @@ final class PlayerViewModel {
                     // Outro available:
                     //   Credits typically run 2–3 minutes. Show the
                     //   overlay the moment we cross outro.startSeconds
-                    //   and fire a fixed 10 s countdown — transition
+                    //   and fire a fixed 10 s countdown, transition
                     //   happens well before the episode naturally ends,
                     //   cutting through the credits.
                     //
                     // No outro:
                     //   Fall back to "show at 30 s, countdown at 10 s
                     //   remaining, synced to the clock." Countdown
-                    //   hits 0 right at playback end — seamless
+                    //   hits 0 right at playback end, seamless
                     //   transition that doesn't cut anything off.
                     if let outro = self.outroSegment {
                         let pastOutroStart = time >= outro.startSeconds
@@ -546,7 +546,7 @@ final class PlayerViewModel {
                 guard let self else { return }
                 // Only show the HDR badge if the display is actually in
                 // HDR mode. When "Match Dynamic Range" is off, the TV
-                // stays in SDR — showing "HDR10" would be misleading.
+                // stays in SDR, showing "HDR10" would be misleading.
                 #if os(tvOS)
                 if format != .sdr {
                     let matchEnabled = self.displayWindow?.avDisplayManager
@@ -561,7 +561,7 @@ final class PlayerViewModel {
             }
             .store(in: &cancellables)
 
-        // Engine subtitle pipeline — covers both embedded streams
+        // Engine subtitle pipeline, covers both embedded streams
         // (cues stream in from the main demux loop) and sidecar
         // files (cues arrive in one batch when SubtitleDecoder
         // finishes). Mirror them into our `subtitleCues` whenever
@@ -617,7 +617,7 @@ final class PlayerViewModel {
         // Auto-cancel on idle, matching `scrubPanEnded`. Commit stays
         // explicit (Select), but if the user taps left / right and
         // walks away without pressing anything else the scrub is
-        // discarded after 5 s and the controls fade out — instead of
+        // discarded after 5 s and the controls fade out, instead of
         // sitting on the picture forever.
         controlsTimer = Task {
             try? await Task.sleep(for: .seconds(5))
@@ -689,7 +689,7 @@ final class PlayerViewModel {
 
     /// Engine-side terminal error mid-playback (decoder failure,
     /// renderer death, network drop after we'd already handed off).
-    /// Different category from start-up errors — playback was running
+    /// Different category from start-up errors, playback was running
     /// and stopped, so the headline reads as such.
     func setEnginePlaybackError(message: String) {
         errorIcon = "exclamationmark.triangle"
@@ -712,7 +712,7 @@ final class PlayerViewModel {
     }
 
     /// In-player picker change. Mutates the session-local `pictureMode`
-    /// and pushes it to the engine. Doesn't persist — the user's
+    /// and pushes it to the engine. Doesn't persist, the user's
     /// global default lives in `PlaybackPreferences.pictureMode` and
     /// is set from the Settings screen.
     func selectPictureMode(_ mode: PlaybackPreferences.PictureMode) {
@@ -721,7 +721,7 @@ final class PlayerViewModel {
     }
 
     /// Seek directly to the start of a chapter. Index is into the
-    /// already-sorted `chapters` array — out-of-range calls no-op.
+    /// already-sorted `chapters` array, out-of-range calls no-op.
     func selectChapter(at index: Int) {
         guard chapters.indices.contains(index) else { return }
         let target = chapters[index].startSeconds
@@ -746,7 +746,7 @@ final class PlayerViewModel {
     /// 1. Explicit `preferredSubtitleLanguage` always wins.
     /// 2. Otherwise, if `autoSubtitleForForeignAudio` is on AND the
     ///    audio isn't in the preferred audio language, surface subs in
-    ///    the preferred audio language — the "Netflix convention":
+    ///    the preferred audio language, the "Netflix convention":
     ///    German audio missing → English audio plays → German subs on
     ///    top.
     /// 3. No match → leave the current subtitle selection alone (the
@@ -770,7 +770,7 @@ final class PlayerViewModel {
 
     /// Resolves the effective "preferred audio language" used for the
     /// foreign-audio detection. The Settings UI ships an "Auto" choice
-    /// that stores nil — without a fallback that path leaves the
+    /// that stores nil, without a fallback that path leaves the
     /// foreign-audio guard unable to compare against anything, so a
     /// user who keeps the default never gets auto-subs even when their
     /// system locale clearly indicates the language they speak. We
@@ -847,7 +847,7 @@ final class PlayerViewModel {
     }
 
     /// Update the flag *and* move focus away from the Skip Intro button
-    /// if it just disappeared — otherwise the user would be stuck on a
+    /// if it just disappeared, otherwise the user would be stuck on a
     /// button that's no longer in the row.
     private func setInsideIntro(_ newValue: Bool) {
         isInsideIntro = newValue
@@ -865,7 +865,7 @@ final class PlayerViewModel {
         Task { await player.seek(to: seg.endSeconds) }
     }
 
-    /// Outro equivalent to `updateIntroVisibility` — no Skip Outro UI
+    /// Outro equivalent to `updateIntroVisibility`, no Skip Outro UI
     /// button today, so this only has to handle the auto-skip path.
     /// Fires once per episode the moment playback crosses into the
     /// outro range.
@@ -897,7 +897,7 @@ final class PlayerViewModel {
     }
 
     /// Fetch intro + outro markers once on startup. Safe if the server
-    /// doesn't expose the endpoint — service returns an empty struct
+    /// doesn't expose the endpoint, service returns an empty struct
     /// and the features simply stay off (no Skip Intro button, normal
     /// 30 s fallback trigger for the next-episode overlay).
     func loadEpisodeSegments() async {
@@ -936,7 +936,7 @@ final class PlayerViewModel {
 
         if isExternal {
             // Sidecar file (.srt / .ass / .vtt next to the media).
-            // Hand the URL to the engine — it fetches the file once
+            // Hand the URL to the engine, it fetches the file once
             // and decodes it via FFmpeg, no host-side SRTParser. The
             // resulting cues land on `engine.subtitleCues` and the
             // mirror sink picks them up.
@@ -953,7 +953,7 @@ final class PlayerViewModel {
                 subtitleCues = []
             }
         } else if activePlayMethod != .transcode {
-            // Embedded stream on direct play / direct stream — engine
+            // Embedded stream on direct play / direct stream, engine
             // streams cues from packets already flowing through the
             // main demux loop, both for text codecs (SubRip / ASS /
             // WebVTT / mov_text) and bitmap codecs (PGS / DVB / HDMV
@@ -961,7 +961,7 @@ final class PlayerViewModel {
             player.selectSubtitleTrack(index: id)
             subtitleCues = player.subtitleCues
         } else {
-            // Transcoded session — HLS rewrites stream indices so
+            // Transcoded session, HLS rewrites stream indices so
             // the engine can't reach the source subtitle. Fall back
             // to the legacy server-extracted SRT loader, which only
             // works for text codecs.
@@ -993,7 +993,7 @@ final class PlayerViewModel {
         }
 
         // The first hit on a 4K UHD container can take several
-        // seconds — Jellyfin lazy-extracts the sub via FFmpeg and
+        // seconds, Jellyfin lazy-extracts the sub via FFmpeg and
         // a freshly-loaded server hasn't cached anything yet. Two
         // attempts with a generous budget catches both the slow-
         // extraction case (long timeout buys it through) and the
@@ -1057,7 +1057,7 @@ final class PlayerViewModel {
     }
 
     /// Detect video format from Jellyfin MediaSource metadata.
-    /// Available before player.load() — no decode needed.
+    /// Available before player.load(), no decode needed.
     private func detectVideoFormat(from source: PlaybackMediaSource) -> VideoFormat {
         guard let videoStream = source.mediaStreams?.first(where: { $0.type == .video }) else {
             return .sdr
@@ -1065,7 +1065,7 @@ final class PlayerViewModel {
 
         // videoRangeType is more specific: "DOVI", "HDR10", "HDR10Plus", "HLG"
         if let rangeType = videoStream.videoRangeType?.uppercased() {
-            // HDR10Plus must be checked before plain HDR10 — its string
+            // HDR10Plus must be checked before plain HDR10, its string
             // contains "HDR10" too, so the order matters.
             if rangeType.contains("HDR10PLUS") { return .hdr10Plus }
             if rangeType.contains("DOVI") || rangeType.contains("DOV") { return .dolbyVision }
@@ -1092,7 +1092,7 @@ final class PlayerViewModel {
 
     /// Tell tvOS to switch the TV to HDR/DV/HLG mode via AVDisplayCriteria.
     /// Must be called BEFORE playback starts so the TV has time to switch.
-    /// Uses public AVKit API — `UIWindow.avDisplayManager` (tvOS 11.2+).
+    /// Uses public AVKit API, `UIWindow.avDisplayManager` (tvOS 11.2+).
     ///
     /// - Returns: `true` if the display will switch to HDR mode. `false` means
     ///   the caller should tone-map HDR content down to SDR during decode
@@ -1121,12 +1121,12 @@ final class PlayerViewModel {
         // Video and Audio → Match Content → Match Dynamic Range). When
         // OFF, the system refuses to switch the display, so a
         // preferredDisplayCriteria assignment would silently no-op and
-        // we'd ship HDR pixel data into an SDR-locked panel — which
+        // we'd ship HDR pixel data into an SDR-locked panel, which
         // renders as black or massively over-saturated. Tonemap path
         // is the safe fallback.
         guard displayManager.isDisplayCriteriaMatchingEnabled else {
             #if DEBUG
-            print("[PlayerVM] applyDisplayCriteria skipped: Match Content disabled in Apple TV settings — falling back to tonemap")
+            print("[PlayerVM] applyDisplayCriteria skipped: Match Content disabled in Apple TV settings, falling back to tonemap")
             #endif
             return false
         }

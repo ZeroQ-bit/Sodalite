@@ -3,7 +3,7 @@ import SwiftUI
 /// Settings → "What's New" entry. Lists every shipped release with
 /// its highlights so users can browse history any time, not just
 /// in the post-update moment. Uses the same row visual as the
-/// WhatsNewView modal — single source of truth for highlight
+/// WhatsNewView modal, single source of truth for highlight
 /// rendering would be nice, but keeping them as parallel views
 /// avoids over-binding the Settings layout to a modal-shaped
 /// component.
@@ -34,7 +34,7 @@ struct ChangelogListView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        // Same bottom edge-fade as the WhatsNewView modal — soft
+        // Same bottom edge-fade as the WhatsNewView modal, soft
         // visual cue that the list keeps going below the viewport.
         // Slightly wider band (88%→100%) than the modal so the fade
         // reads through the navigation-stack container that wraps
@@ -66,7 +66,7 @@ private struct VersionSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            // "Version 0.4.0" — keep the literal "Version" prefix
+            // "Version 0.4.0", keep the literal "Version" prefix
             // verbatim so we don't have to ship a catalog entry for
             // every language; "Version" reads correctly in every
             // shipped locale.
@@ -135,7 +135,7 @@ private struct HighlightRow: View {
         .shadow(color: .black.opacity(isFocused ? 0.3 : 0), radius: 15, y: 8)
         .animation(.easeInOut(duration: 0.2), value: isFocused)
         // Each row is focusable so the tvOS focus engine can step
-        // through them and auto-scroll the list as it goes — same
+        // through them and auto-scroll the list as it goes, same
         // pattern as the WhatsNewView modal.
         .focusable()
         .focused($isFocused)

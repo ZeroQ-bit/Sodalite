@@ -1,6 +1,6 @@
 import Foundation
 
-/// Selector for a Jellyseerr "filtered discover" page — genre,
+/// Selector for a Jellyseerr "filtered discover" page, genre,
 /// streaming network, or production studio. Plumbed through the
 /// CatalogFilteredGridView's navigation destination so the grid
 /// knows which Seerr endpoint to hit and what title to render at
@@ -12,7 +12,7 @@ enum CatalogFilter: Hashable, Sendable {
     case tvNetwork(id: Int, name: String)
     /// Live "what's currently streaming on this service" filter
     /// backed by TMDB's watch-providers data. Returns both movies
-    /// and TV — preferred over `.tvNetwork` for streamers that span
+    /// and TV, preferred over `.tvNetwork` for streamers that span
     /// both (Disney+, Netflix, Apple TV+, …) so a Catalog tap on
     /// the Disney+ tile doesn't hide every Disney+ movie behind a
     /// TV-only network filter.
@@ -31,7 +31,7 @@ enum CatalogFilter: Hashable, Sendable {
 
     /// Stable identifier used as the FilterCache key. Region is
     /// embedded for streaming services because TMDB watch-providers
-    /// are region-specific — the same Disney+ tile resolves to a
+    /// are region-specific, the same Disney+ tile resolves to a
     /// different lineup in DE vs US, so the cached pages must be
     /// scoped to the region they came from.
     var cacheKey: String {

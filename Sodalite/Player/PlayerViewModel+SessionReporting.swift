@@ -4,7 +4,7 @@ import AetherEngine
 extension PlayerViewModel {
 
     /// Stable position in Jellyfin ticks, derived from playbackTime (updated
-    /// by Combine every 250ms). Survives player.stop() — unlike player.currentTime
+    /// by Combine every 250ms). Survives player.stop(), unlike player.currentTime
     /// which resets to 0 immediately.
     ///
     /// Falls back to resumePositionTicks ONLY if the player hasn't

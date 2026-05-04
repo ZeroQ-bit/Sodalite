@@ -7,7 +7,7 @@ struct AppRouter: View {
     /// Tracks whether the initial session restore + splash has already
     /// run for this process. SwiftUI re-fires `.task` when the AppRouter
     /// view temporarily disappears (e.g. while the UIKit-presented
-    /// player modal is on screen) — without this guard, returning from
+    /// player modal is on screen), without this guard, returning from
     /// the player would show the launch splash again.
     @State private var hasRestored = false
 
@@ -20,11 +20,11 @@ struct AppRouter: View {
 
     /// Holds the JellyfinItem fetched for an incoming deep link
     /// (TopShelf cell tap, custom URL invocation). The fullScreenCover
-    /// drives off this — non-nil = sheet shown.
+    /// drives off this, non-nil = sheet shown.
     @State private var deepLinkItem: JellyfinItem?
 
     /// Set true once after the splash hides on a launch where
-    /// `ChangelogPreferences.shouldShowOnLaunch()` returned true —
+    /// `ChangelogPreferences.shouldShowOnLaunch()` returned true,
     /// drives the WhatsNew fullScreenCover. Cleared by the modal's
     /// dismiss callback, which also stamps the version as seen so
     /// it stays out of the way until the next upgrade.
@@ -41,7 +41,7 @@ struct AppRouter: View {
             }
 
             // Splash overlays everything until both the session restore
-            // has finished AND the minimum display time has elapsed —
+            // has finished AND the minimum display time has elapsed,
             // then it fades out to reveal whichever root view is now
             // appropriate. Cross-fade looks nicer than the old spinner-
             // then-content swap and prevents a jarring snap when restore
@@ -95,7 +95,7 @@ struct AppRouter: View {
 
     /// Fetches the active user's first Resume-queue item and feeds
     /// it through the normal deep-link channel. Triggered by
-    /// `ContinueWatchingIntent` (Siri / Shortcuts) — the intent
+    /// `ContinueWatchingIntent` (Siri / Shortcuts), the intent
     /// itself stays trivial so tvOS-Siri's "no async work" policy
     /// for voice invocation is respected.
     private func resolveContinueWatchingRequest() async {
@@ -128,7 +128,7 @@ struct AppRouter: View {
     private func resolvePendingDeepLink() async {
         guard let id = appState.pendingDeepLinkItemID else { return }
         // Cold-launch race: the URL arrives before restoreSession
-        // finishes. Wait it out — the TopShelf cell can't have been
+        // finishes. Wait it out, the TopShelf cell can't have been
         // produced without a valid session in the first place.
         while !appState.isAuthenticated, !Task.isCancelled {
             try? await Task.sleep(for: .milliseconds(150))
@@ -181,7 +181,7 @@ struct AppRouter: View {
             return
         }
 
-        // primaryImageTag is optional in the keychain — users without
+        // primaryImageTag is optional in the keychain, users without
         // a custom avatar never had one persisted. Missing = initials.
         // Fallback path covers JellySeeTV migrations whose last login
         // pre-dated the dedicated activeUserImageTag entry: the
@@ -208,7 +208,7 @@ struct AppRouter: View {
         )
 
         // Migrate pre-0.3.0 sessions into the remembered-profiles
-        // list. Legacy installs only persisted the active session —
+        // list. Legacy installs only persisted the active session,
         // without this, the "Add another profile" flow would show
         // the currently signed-in user in the picker (since no
         // remembered entry existed to filter by).
@@ -261,17 +261,17 @@ struct AppRouter: View {
             appState.setAuthenticated(server: server, user: user)
         } else if remembered.count > 1 {
             launchPickerServer = server
-            // Fall through — Seerr restore is independent of which
+            // Fall through, Seerr restore is independent of which
             // Jellyfin profile ends up active and we want that state
             // ready by the time the user taps a profile.
         } else {
             // Single-profile install (or nothing remembered yet).
-            // Enter the app directly — no point showing a picker
+            // Enter the app directly, no point showing a picker
             // with one card on it.
             appState.setAuthenticated(server: server, user: restored)
         }
 
-        // Seerr restore — prefer the profile-scoped session when the
+        // Seerr restore, prefer the profile-scoped session when the
         // active user has one saved, fall back to the global
         // last-used entry so legacy (pre-0.3.0) Seerr logins still
         // come back on first upgrade.
@@ -301,7 +301,7 @@ struct AppRouter: View {
                 }
             } else {
                 // Only forget the profile-scoped entry when it was the
-                // one that failed — keeps other profiles' sessions
+                // one that failed, keeps other profiles' sessions
                 // untouched.
                 if scopedSeerrServer != nil, let uid = activeUserID, let sid = activeServerID {
                     dependencies.forgetRememberedSeerr(forJellyfinUserID: uid, jellyfinServerID: sid)

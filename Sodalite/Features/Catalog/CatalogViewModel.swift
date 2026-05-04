@@ -25,7 +25,7 @@ final class CatalogViewModel {
     /// show a hero image instead of a flat capsule.
     var movieGenres: [SeerrGenreSlide] = []
     var tvGenres: [SeerrGenreSlide] = []
-    /// Sample backdrop paths per network/studio TMDB id — populated
+    /// Sample backdrop paths per network/studio TMDB id, populated
     /// in the background after the first discover load by hitting
     /// `/discover/tv/network/{id}` (or `…/movies/studio/{id}`) with
     /// page 1 and grabbing the first result's backdrop. Lets the
@@ -125,7 +125,7 @@ final class CatalogViewModel {
         }
 
         // Genre sliders + provider backdrops load best-effort in the
-        // background — failures here just leave the rows looking
+        // background, failures here just leave the rows looking
         // plain, they don't poison the whole discover screen.
         Task { await loadGenres() }
         Task { await loadProviderBackdrops() }
@@ -142,7 +142,7 @@ final class CatalogViewModel {
     private func loadProviderBackdrops() async {
         // Fans out one fetch per provider/studio. Two jobs in one pass:
         //
-        //  1. Pull a sample backdrop for the tile background — page 1
+        //  1. Pull a sample backdrop for the tile background, page 1
         //     with default sort gives "popular on this service first",
         //     good enough as a hero image.
         //
@@ -158,7 +158,7 @@ final class CatalogViewModel {
         //     the catalog already drops them.
         //
         // For streamers with a TMDB watch-provider id, we fetch movies
-        // + tv in parallel and merge them — same shape the user gets
+        // + tv in parallel and merge them, same shape the user gets
         // when tapping the tile, so the cache hit is exact and the
         // count is honest. Falls back to the TV-network endpoint for
         // broadcast-only entries (ABC, NBC, CBS).
@@ -233,7 +233,7 @@ final class CatalogViewModel {
             return collected
         }
 
-        // MainActor pass — write the cache + backdrop once everything's
+        // MainActor pass, write the cache + backdrop once everything's
         // resolved. Keeping the FilterCache writes off the detached
         // closures avoids the async-isolation error and centralises
         // the side effects in one easy-to-read sweep.
@@ -269,7 +269,7 @@ final class CatalogViewModel {
 
     /// Load the next page for a single row. Called by the horizontal row
     /// when the user scrolls close to the end. Dedupes against the current
-    /// items — Seerr occasionally returns the same entry on adjacent pages
+    /// items, Seerr occasionally returns the same entry on adjacent pages
     /// when the trending list shifts.
     func loadMore(row: DiscoverRow) async {
         var section = section(for: row)
@@ -305,7 +305,7 @@ final class CatalogViewModel {
         } catch {
             section.isLoading = false
             updateSection(row, to: section)
-            // Swallow pagination errors — the user still has page 1 visible,
+            // Swallow pagination errors, the user still has page 1 visible,
             // surfacing a banner mid-scroll would be jarring.
         }
     }
@@ -322,7 +322,7 @@ final class CatalogViewModel {
                 skip: 0
             )
             myRequests = result.results
-            // Kick off the enrichment in the background — the list
+            // Kick off the enrichment in the background, the list
             // renders immediately with placeholder titles and swaps
             // to real metadata as each detail fetch returns.
             Task { await enrichRequestMetadata(for: result.results) }

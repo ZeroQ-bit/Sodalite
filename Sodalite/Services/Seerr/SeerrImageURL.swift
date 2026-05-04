@@ -23,7 +23,7 @@ enum SeerrImageURL {
         return base.appendingPathComponent(size.rawValue).appendingPathComponent(cleaned)
     }
 
-    /// TMDB's duotone logo treatment — collapses any colour logo down to
+    /// TMDB's duotone logo treatment, collapses any colour logo down to
     /// a white-on-grey monochrome PNG. Keeps every network/studio tile
     /// visually consistent against a dark background, the same way the
     /// Jellyseerr web client renders its CompanyCard rows.

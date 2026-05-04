@@ -14,7 +14,7 @@ struct CatalogFilteredGridView: View {
     @State private var page: Int
     @State private var totalPages: Int
     @State private var isLoadingMore = false
-    /// Background revalidation flag — true while we're re-fetching
+    /// Background revalidation flag, true while we're re-fetching
     /// page 1 to refresh the cached grid. Deliberately separate from
     /// `isLoadingMore` so we *don't* paint a spinner during silent
     /// stale-while-revalidate. The user already sees the cached grid;
@@ -34,7 +34,7 @@ struct CatalogFilteredGridView: View {
         // Hydrate from FilterCache *during init* so the very first
         // body render already paints the cached grid. Doing it inside
         // `.task(id:)` later would mean one frame of empty state
-        // before the cache snaps in — visible as a tiny "loading"
+        // before the cache snaps in, visible as a tiny "loading"
         // flash on every tap that the user perceives as a network
         // round-trip even when the answer is already on disk.
         if let cached = FilterCache.shared.catalogPage(filterKey: filter.cacheKey) {
@@ -113,7 +113,7 @@ struct CatalogFilteredGridView: View {
 
     private func shouldPaginate(after media: SeerrMedia) -> Bool {
         guard !isLoadingMore, page < totalPages else { return false }
-        // Trigger when the user scrolls within ~12 items of the end —
+        // Trigger when the user scrolls within ~12 items of the end,
         // gives the network call time to land before they hit the
         // bottom of the visible grid.
         let key = media.stableKey
@@ -124,7 +124,7 @@ struct CatalogFilteredGridView: View {
     }
 
     /// Always re-fetches page 1 and replaces the displayed items
-    /// wholesale — used on view appearance to pick up any rotation
+    /// wholesale, used on view appearance to pick up any rotation
     /// in the provider's lineup since last visit. Updates the cache
     /// so the next appearance hydrates instantly. Subsequent pages
     /// (2+) still go through `loadMore` on demand.
@@ -135,7 +135,7 @@ struct CatalogFilteredGridView: View {
 
         do {
             let result = try await fetchPage(1)
-            // Only replace items if the result actually changed —
+            // Only replace items if the result actually changed,
             // wholesale `items = result.results` even with identical
             // IDs forces SwiftUI to re-evaluate every cell, which the
             // user reads as a "reload flash" right after the cached
@@ -262,7 +262,7 @@ struct CatalogFilteredGridView: View {
     }
 
     /// Loading state with an invisible focusable button so the Menu
-    /// remote button still has somewhere to land — without it, a tap
+    /// remote button still has somewhere to land, without it, a tap
     /// during the initial network roundtrip would quit the app.
     private var loadingState: some View {
         VStack(spacing: 16) {

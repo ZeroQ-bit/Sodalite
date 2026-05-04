@@ -21,12 +21,12 @@ extension SeerrDiscoverServiceProtocol {
     /// the TV watch-provider endpoints for `(providerID, region)`,
     /// merge them into a single TMDB-id set. Used by every smart
     /// streaming-provider tile (Home `FilteredGridView` + Home
-    /// `HomeViewModel.resolveProviderItems`) — kept here rather than
+    /// `HomeViewModel.resolveProviderItems`), kept here rather than
     /// duplicated at each call site so a future tweak (more pages,
     /// different sort, error handling) lands in one place.
     ///
     /// Errors are swallowed per call so a single page failing the
-    /// network doesn't poison the whole resolve — empty lists are
+    /// network doesn't poison the whole resolve, empty lists are
     /// added to the union as if the page returned nothing. The
     /// caller can't tell "endpoint failed" from "endpoint really
     /// returned zero", which is fine: in both cases the smart

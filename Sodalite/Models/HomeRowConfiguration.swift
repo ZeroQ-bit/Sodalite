@@ -59,7 +59,7 @@ enum HomeRowType: String, Codable, Sendable, CaseIterable, Identifiable {
         }
     }
 
-    /// True for rows whose contents are *not* sourced from Jellyfin —
+    /// True for rows whose contents are *not* sourced from Jellyfin,
     /// today only the Discover (Jellyseerr) streaming-provider row,
     /// which renders a hardcoded provider list with TMDB logos and
     /// pushes a Jellyseerr-backed filter grid instead of the local

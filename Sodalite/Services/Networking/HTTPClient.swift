@@ -31,8 +31,8 @@ final class HTTPClient: HTTPClientProtocol, @unchecked Sendable {
         // connect.sid, Jellyfin uses header-based auth). If we let
         // URLSession.shared auto-persist cookies in HTTPCookieStorage,
         // a stale connect.sid from an expired Seerr session keeps
-        // getting attached to every request — including the fresh
-        // /auth/jellyfin POST — which Seerr then rejects with 401
+        // getting attached to every request, including the fresh
+        // /auth/jellyfin POST, which Seerr then rejects with 401
         // before looking at the credentials. Using a dedicated session
         // with cookies disabled keeps our manual header the single
         // source of truth.
@@ -49,7 +49,7 @@ final class HTTPClient: HTTPClientProtocol, @unchecked Sendable {
             // response to /Items/Latest or /Users/{id}/Items that
             // came back with a permissive Cache-Control header
             // would continue serving stale data across app
-            // restarts — newly added movies and episodes stayed
+            // restarts, newly added movies and episodes stayed
             // invisible until the cache naturally evicted. Blob
             // sizes for JSON are small; always hitting the network
             // is the right tradeoff for a "feels current"

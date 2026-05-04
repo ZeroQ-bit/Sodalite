@@ -10,7 +10,7 @@ extension PlayerViewModel {
 
         // If the server gave us an outro marker (Jellyfin 10.10+ or the
         // intro-skipper plugin picked it up), start the next-episode
-        // countdown as soon as the outro begins — that's usually where
+        // countdown as soon as the outro begins, that's usually where
         // credits roll and the episode is effectively over. Otherwise
         // fall back to the hardcoded 30 s-before-end threshold.
         let shouldFetch: Bool
@@ -77,7 +77,7 @@ extension PlayerViewModel {
         }
     }
 
-    /// Starts the auto-advance timer. `from` defaults to 10 s — that's
+    /// Starts the auto-advance timer. `from` defaults to 10 s, that's
     /// the outro-based flow where we've got minutes of credits to burn
     /// through. The no-outro fallback passes the actual remaining
     /// seconds so the countdown hits 0 exactly at playback end.
@@ -100,7 +100,7 @@ extension PlayerViewModel {
                 nextEpisodeCountdown -= 1
             }
             guard !Task.isCancelled else { return }
-            // Launch in a NEW task — if we called playNextEpisode() directly,
+            // Launch in a NEW task, if we called playNextEpisode() directly,
             // cancelling nextEpisodeTimer would cancel the playback startup
             // (CancellationError in player.load → "abgebrochen").
             Task { @MainActor [weak self] in
@@ -190,7 +190,7 @@ extension PlayerViewModel {
 
     /// Switches playback to a specific episode in the loaded season
     /// list. Tearing down the current session and starting a fresh
-    /// one mirrors the playNextEpisode flow exactly — same reset
+    /// one mirrors the playNextEpisode flow exactly, same reset
     /// surface, same reportStop / reportStart cycle so Jellyfin's
     /// session tracking stays consistent. Bounds-checked against
     /// the current `seasonEpisodes` so a stale dropdown highlight
@@ -209,7 +209,7 @@ extension PlayerViewModel {
         await reportStop()
         player.stop()
 
-        // Same reset surface playNextEpisode uses — the only
+        // Same reset surface playNextEpisode uses, the only
         // difference is which JellyfinItem we hand to startPlayback.
         item = target
         startFromBeginning = true

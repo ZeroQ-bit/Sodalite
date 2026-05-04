@@ -106,7 +106,7 @@ struct HomeCustomizeView: View {
                                     .stroke(movingType == config.type ? Color.accentColor.opacity(0.6) : .clear, lineWidth: 2)
                             )
                             .overlay(
-                                // Accent focus stroke — same 3pt treatment
+                                // Accent focus stroke, same 3pt treatment
                                 // as the rest of the app's focusable cards.
                                 // Layered on top of the "moving" indicator
                                 // above; when both apply the focus stroke
@@ -304,7 +304,7 @@ extension Notification.Name {
     static let playbackProgressDidChange = Notification.Name("playbackProgressDidChange")
     /// Fires after LoginView completes (password or Quick Connect).
     /// ProfileSettingsView listens so it can pop its "Add another
-    /// profile" navigation branch — without it, the login success
+    /// profile" navigation branch, without it, the login success
     /// screen hangs because the user was already authenticated
     /// before and AppRouter doesn't tear down TabRootView.
     static let loginDidComplete = Notification.Name("loginDidComplete")
@@ -322,7 +322,7 @@ extension HomeRowConfig {
         // streaming-providers row replaced it). A plain
         // `decode([HomeRowConfig].self)` would fail the whole array on
         // the first unknown raw value and silently reset every other
-        // customization the user had — the JSONSerialization detour
+        // customization the user had, the JSONSerialization detour
         // skips the dead entries and keeps the rest intact.
         guard let raw = try? JSONSerialization.jsonObject(with: data) as? [[String: Any]] else {
             return HomeRowConfig.defaultConfig()

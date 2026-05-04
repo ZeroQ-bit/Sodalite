@@ -4,7 +4,7 @@ import Foundation
 /// user can switch between it and other profiles without re-entering
 /// credentials. One entry per (server, user) pair.
 ///
-/// The token itself is a long-lived Jellyfin access token — tokens
+/// The token itself is a long-lived Jellyfin access token, tokens
 /// only go invalid if the server admin revokes them. A 401 on switch
 /// is therefore the signal to drop the entry and ask the user for
 /// their password again for that specific profile.

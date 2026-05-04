@@ -6,7 +6,7 @@ import AVFoundation
 ///
 /// Uses `AVPlayer.availableHDRModes` for per-format detection (HDR10, DV, HLG).
 /// This API is deprecated in tvOS 26 but its replacement (`eligibleForHDRPlayback`)
-/// is just a Bool — no way to distinguish DV from HDR10. We need the OptionSet
+/// is just a Bool, no way to distinguish DV from HDR10. We need the OptionSet
 /// for correct DV metadata handling. Warnings are expected until Apple provides
 /// a proper replacement.
 @MainActor

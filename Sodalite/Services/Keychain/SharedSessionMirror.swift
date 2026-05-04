@@ -11,7 +11,7 @@ import Security
 /// Lives in its own service bucket (`…Sodalite.shared`) so the
 /// main app's primary keychain entries (in the default access
 /// group) stay logically separated from the shelf's narrow
-/// projection — even though both physically share the same
+/// projection, even though both physically share the same
 /// app-bundle keychain unless the .shared access group resolves at
 /// runtime, in which case the mirror lands in that group.
 enum SharedSessionMirror {
@@ -65,14 +65,14 @@ enum SharedSessionMirror {
     }
 
     /// Materializes the actual `<TeamID>.de.superuser404.Sodalite.shared`
-    /// string at runtime — `$(AppIdentifierPrefix)` only expands at
+    /// string at runtime, `$(AppIdentifierPrefix)` only expands at
     /// codesign, never at `SecItemAdd`. We crib the team prefix off
     /// any keychain item the process can already see (the main
     /// app's KeychainService has always written at least `activeServer`
     /// by the time the mirror runs). When no items exist yet (truly
     /// fresh install, somehow called pre-login), we drop the access
     /// group from the query and let the OS fall back to the first
-    /// entitled group — losing some isolation but keeping the write
+    /// entitled group, losing some isolation but keeping the write
     /// from failing outright.
     private static let resolvedAccessGroup: String? = {
         let probe: [String: Any] = [

@@ -133,7 +133,7 @@ final class JellyfinImageService {
     }
 
     /// User avatar (`/Users/{id}/Images/Primary`). Differs from
-    /// `imageURL(itemID:…)` in the URL prefix — items live under
+    /// `imageURL(itemID:…)` in the URL prefix, items live under
     /// `/Items`, users under `/Users`. Returns nil when the user has
     /// no profile picture set so the UI can fall back to initials.
     func userProfileImageURL(userID: String, tag: String?, maxWidth: Int = 240) -> URL? {

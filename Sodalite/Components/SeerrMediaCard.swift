@@ -41,7 +41,7 @@ struct SeerrMediaCard: View {
             }
         }
         .overlay(
-            // Outer accent stroke — same pattern as MediaCard. The
+            // Outer accent stroke, same pattern as MediaCard. The
             // poster itself stays uncropped and the title text below
             // sits outside the ring.
             RoundedRectangle(cornerRadius: 15)

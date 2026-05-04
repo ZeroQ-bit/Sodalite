@@ -27,7 +27,7 @@ struct SodaliteApp: App {
         }
     }
 
-    /// `sodalite://item/{id}` is the only scheme we honor today —
+    /// `sodalite://item/{id}` is the only scheme we honor today,
     /// emitted by the TopShelf extension's cell `displayAction`.
     /// Stash the id in AppState; AppRouter watches that field, fetches
     /// the full item, and presents the detail sheet once the session

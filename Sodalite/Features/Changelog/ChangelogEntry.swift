@@ -19,7 +19,7 @@ struct ChangelogHighlight: Identifiable, Sendable {
     let kind: Kind
     let title: LocalizedStringResource
     let description: LocalizedStringResource?
-    /// Override the kind's default SF Symbol — used when a specific
+    /// Override the kind's default SF Symbol, used when a specific
     /// feature has a more recognizable icon than the generic
     /// "sparkles" / "wrench" fallback.
     let symbolOverride: String?

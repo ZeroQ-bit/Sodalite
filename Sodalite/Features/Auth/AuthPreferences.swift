@@ -3,7 +3,7 @@ import Observation
 
 /// User-facing preferences that control what happens on app launch
 /// when multiple profiles have been remembered for the active
-/// server. UserDefaults-backed — none of this is sensitive (just
+/// server. UserDefaults-backed, none of this is sensitive (just
 /// which profile ID to auto-pick and whether to show the picker).
 @Observable
 @MainActor
@@ -33,7 +33,7 @@ final class AuthPreferences {
     }
 
     /// Jellyfin user ID to restore when `launchBehavior == .useDefault`.
-    /// Nil means "no default set yet" — the picker shows regardless
+    /// Nil means "no default set yet", the picker shows regardless
     /// of launch behavior in that case.
     var defaultUserID: String? {
         didSet {

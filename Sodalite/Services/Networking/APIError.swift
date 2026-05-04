@@ -42,7 +42,7 @@ enum APIError: LocalizedError, Sendable {
         }
     }
 
-    /// Best-effort decode of a Jellyfin/Jellyseerr JSON error body —
+    /// Best-effort decode of a Jellyfin/Jellyseerr JSON error body,
     /// surfaces the server's real reason ("Invalid password",
     /// "Media server has not been set up yet", …) instead of the
     /// generic HTTP-code fallback. Falls back to a truncated raw

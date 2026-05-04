@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Shown on cold launch when the user has multiple remembered
 /// profiles for the active server. Picking a card re-uses the
-/// cached token via `switchToUser` — no password re-entry.
+/// cached token via `switchToUser`, no password re-entry.
 ///
 /// Long-pressing a card opens a confirm-to-forget menu. The
 /// "Add another profile" button jumps straight to LoginView for
@@ -32,7 +32,7 @@ struct LaunchProfilePickerView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .navigationDestination(isPresented: $navigateToAddProfile) {
                 // UserPickerView shows the server's public users with
-                // avatars — mirrors the normal login entry point so a
+                // avatars, mirrors the normal login entry point so a
                 // second profile feels like "pick another user" rather
                 // than "type username+password from scratch".
                 UserPickerView(server: server)
@@ -121,7 +121,7 @@ struct LaunchProfilePickerView: View {
             .padding(.vertical, 14)
         }
         // Same accent-tint trap as the addProfileButton on the
-        // ProfileSettingsView — the default tvOS bordered style fills
+        // ProfileSettingsView, the default tvOS bordered style fills
         // with the active tint and propagates that tint into the
         // Label's icon + text. Tile style fills with white-opacity
         // and lets the label render in primary foreground regardless.
@@ -133,7 +133,7 @@ struct LaunchProfilePickerView: View {
     private func select(_ user: RememberedUser) {
         do {
             try dependencies.switchToUser(user, server: server)
-            // Drop cached thumbnails — they were fetched under the
+            // Drop cached thumbnails, they were fetched under the
             // old profile's token which may no longer resolve.
             ImageCache.shared.clear()
             let jf = JellyfinUser(
@@ -255,7 +255,7 @@ struct RememberedProfileCard: View {
     let server: JellyfinServer
     /// Set on the card representing the active session. Surfaces a
     /// green checkmark badge on the avatar + a green idle ring so
-    /// the user can spot the current login at a glance — same row
+    /// the user can spot the current login at a glance, same row
     /// of cards otherwise looks identical, and the previous
     /// "Currently signed in" / "Switch profile" split-section UI
     /// disappears in favour of a single grid.
@@ -286,7 +286,7 @@ struct RememberedProfileCard: View {
         // tvOS-native: long-pressing a focusable button opens a
         // context menu instead of firing both the primary action
         // and a secondary gesture on release. Tapping "Remove"
-        // inside the menu is the explicit confirmation — one extra
+        // inside the menu is the explicit confirmation, one extra
         // click to protect against accidental deletion.
         .contextMenu {
             Button(role: .destructive, action: onLongPress) {
@@ -317,7 +317,7 @@ struct RememberedProfileCard: View {
         .overlay(
             // Subtle green idle ring on the active profile so it's
             // recognisable even before the user moves focus over it.
-            // Suppressed when the user moves focus onto this card —
+            // Suppressed when the user moves focus onto this card,
             // the focus-tint ring takes over.
             Circle()
                 .strokeBorder(.green, lineWidth: 4)

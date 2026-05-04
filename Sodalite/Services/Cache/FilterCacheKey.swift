@@ -19,7 +19,7 @@ import Foundation
 /// - **Catalog**: keys passed to `FilterCache.catalogPage(filterKey:)`
 ///   / `setCatalogPage(_:totalPages:filterKey:)`. Stores
 ///   `[SeerrMedia]` lists for Catalog tiles.
-/// Pure string builders — `nonisolated` throughout so callers in
+/// Pure string builders, `nonisolated` throughout so callers in
 /// detached tasks (the catalog precompute fan-out, the home provider
 /// resolver) can use them without an actor hop. The project's default
 /// MainActor isolation would otherwise pin every helper here to the
@@ -28,7 +28,7 @@ enum FilterCacheKey {
     enum Home {
         /// Local-library smart filter for a streaming-provider tile
         /// (Netflix, Disney+, …). Region is part of the key because
-        /// TMDB watch-providers are region-specific — a Disney+ tile
+        /// TMDB watch-providers are region-specific, a Disney+ tile
         /// in DE resolves to a different lineup than in US.
         nonisolated static func provider(id: Int, region: String) -> String {
             "home-\(id)-\(region)"
@@ -41,7 +41,7 @@ enum FilterCacheKey {
             "home-genre-\(name)"
         }
 
-        /// Generic tag filter — fallback for HomeRowType cases
+        /// Generic tag filter, fallback for HomeRowType cases
         /// without their own dedicated key.
         nonisolated static func tag(name: String) -> String {
             "home-tag-\(name)"

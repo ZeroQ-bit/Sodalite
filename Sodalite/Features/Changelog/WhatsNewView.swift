@@ -4,7 +4,7 @@ import SwiftUI
 /// Fires once after the user upgrades, then `ChangelogPreferences`
 /// marks the version seen and the modal stays out of the way until
 /// the next bump. Mirrors the visual treatment of native tvOS
-/// "What's New" sheets — large title, icon row, dismiss CTA.
+/// "What's New" sheets, large title, icon row, dismiss CTA.
 ///
 /// Layout: a single ScrollView wraps header + highlights so the
 /// content can grow as long as the changelog needs and scroll
@@ -18,7 +18,7 @@ struct WhatsNewView: View {
     /// Namespace anchoring the focus scope so the first highlight row
     /// can declare itself as the default focus target. Without it,
     /// tvOS lands focus on whichever fokussierbare Item is closest to
-    /// the leading-top corner of the modal — which on this layout is
+    /// the leading-top corner of the modal, which on this layout is
     /// the safeAreaInset dismiss button, not the changelog the user
     /// is here to read.
     @Namespace private var focusNamespace
@@ -36,7 +36,7 @@ struct WhatsNewView: View {
         // Bottom edge-fade so the user sees that more content is
         // hiding below the visible viewport when the changelog runs
         // long. Same affordance Apple uses in the TV app's What's
-        // New sheets — soft gradient cutoff reads as "scrollable"
+        // New sheets, soft gradient cutoff reads as "scrollable"
         // without needing an explicit chevron hint. The fade only
         // covers the bottom 6% so a focused highlight near the
         // edge stays readable; the focus engine keeps focus
@@ -54,7 +54,7 @@ struct WhatsNewView: View {
         )
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         // Near-opaque black so titles and rows behind the modal
-        // don't bleed through and hurt readability — the previous
+        // don't bleed through and hurt readability, the previous
         // 0.85 was visibly translucent over the catalog grid.
         .background(Color.black.opacity(0.96).ignoresSafeArea())
         // Pin the Got-it CTA to the bottom edge regardless of how
@@ -79,7 +79,7 @@ struct WhatsNewView: View {
                 .textCase(.uppercase)
                 .tracking(2)
 
-            // Brand name + version is fixed across languages — no
+            // Brand name + version is fixed across languages, no
             // need for a catalog entry. Splitting kicker (localized)
             // from title (verbatim) keeps the dynamic part out of
             // the LocalizedStringResource interpolation chain.
@@ -102,7 +102,7 @@ struct WhatsNewView: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 80)
         // Padding goes on the list itself instead of a trailing
-        // empty Color spacer — without that, the focus engine sees
+        // empty Color spacer, without that, the focus engine sees
         // empty scroll space below the last row, scrolls into it
         // on the first down-press, and only routes out to the
         // safe-area-inset dismiss button on the second press.
@@ -174,7 +174,7 @@ private struct HighlightRow: View {
         .shadow(color: .black.opacity(isFocused ? 0.3 : 0), radius: 15, y: 8)
         .animation(.easeInOut(duration: 0.2), value: isFocused)
         // Each row needs to be focusable for the tvOS focus engine
-        // to step through them — otherwise the scroll view has no
+        // to step through them, otherwise the scroll view has no
         // anchor inside it and a long changelog can't be scrolled
         // by the user.
         .focusable()
@@ -194,7 +194,7 @@ private struct HighlightRow: View {
 
     private var tintForKind: Color {
         // Map the kind to a recognizable colour without relying on
-        // the user's accent — these are status indicators, not
+        // the user's accent, these are status indicators, not
         // brand surfaces.
         switch highlight.kind {
         case .new: return .blue

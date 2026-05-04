@@ -6,7 +6,7 @@ import Foundation
 /// an hour. Sprachneutral so we can use the same string across all 26
 /// shipped locales without going through the catalog.
 enum ResumeTimeFormatter {
-    /// Jellyfin's `playbackPositionTicks` is `Int64?` — Swift refuses
+    /// Jellyfin's `playbackPositionTicks` is `Int64?`, Swift refuses
     /// to widen `Int → Int64` implicitly in either direction, so the
     /// formatter mirrors the source type rather than forcing every
     /// call site to wrap in `Int(...)`.

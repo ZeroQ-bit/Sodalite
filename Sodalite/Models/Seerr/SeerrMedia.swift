@@ -65,7 +65,7 @@ struct SeerrMediaInfo: Codable, Sendable, Equatable {
     let status: SeerrMediaStatus?
     let requests: [SeerrRequest]?
     /// Sonarr-scan derived per-season status. Authoritative for "is
-    /// season N currently on the server?" — independent of whether a
+    /// season N currently on the server?", independent of whether a
     /// request entry still exists. A season the user added by hand
     /// (no request, manual Sonarr import) shows up here as
     /// `.available`, which the season tab needs to render its

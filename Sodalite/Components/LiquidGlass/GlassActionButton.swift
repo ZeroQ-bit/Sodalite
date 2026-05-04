@@ -4,7 +4,7 @@ struct GlassActionButton: View {
     let title: LocalizedStringKey
     let systemImage: String
     var isProminent: Bool = false
-    /// Optional inline secondary label — used by the detail-view
+    /// Optional inline secondary label, used by the detail-view
     /// resume button to surface "S1E5 · 12:34" without breaking row
     /// height. Renders in caption + 0.75 opacity so it reads as
     /// supporting metadata, not a competing title.
@@ -17,7 +17,7 @@ struct GlassActionButton: View {
     var progressFraction: Double? = nil
     /// When true, the label is replaced with a spinner and the
     /// button is disabled. Used while the host view is still
-    /// resolving which content the action will play — e.g. the
+    /// resolving which content the action will play, e.g. the
     /// series detail's play button waits for getNextUp before it
     /// can decide between "Abspielen" and "Fortsetzen + S1E5".
     /// Showing a placeholder is visually quieter than letting the
@@ -67,7 +67,7 @@ struct GlassButtonStyle: ButtonStyle {
     @Environment(\.isFocused) private var isFocused
 
     /// A tile that wears a progress overlay drops its prominent fill
-    /// — the accent-coloured backdrop drowned out the accent-coloured
+    ///, the accent-coloured backdrop drowned out the accent-coloured
     /// progress capsule and the bar read as a barely-visible shade
     /// difference. Falling back to the neutral grey fill the other
     /// detail-row buttons use lets the progress capsule pop in full

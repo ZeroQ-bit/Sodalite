@@ -47,7 +47,7 @@ final class JellyfinAuthService: JellyfinAuthServiceProtocol {
 
     /// Returns the list of user accounts visible on the server's login
     /// screen. Servers with "Show users on login screen" disabled (or
-    /// pre-10.x) return an empty array — callers should fall back to a
+    /// pre-10.x) return an empty array, callers should fall back to a
     /// manual username field in that case.
     func getPublicUsers() async throws -> [JellyfinUser] {
         try await client.request(
@@ -59,7 +59,7 @@ final class JellyfinAuthService: JellyfinAuthServiceProtocol {
     /// Fetch the currently authenticated user's full record via
     /// /Users/Me. More reliable than /Users/{id} because it doesn't
     /// depend on the caller having admin permission to query another
-    /// user's details — Me always resolves to whoever the current
+    /// user's details, Me always resolves to whoever the current
     /// access token represents.
     func getCurrentUser() async throws -> JellyfinUser {
         try await client.request(

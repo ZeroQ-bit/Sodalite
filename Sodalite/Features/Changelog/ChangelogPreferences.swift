@@ -10,7 +10,7 @@ import Foundation
 ///   mark seen.
 /// - First install ever: `lastSeenVersion` is empty AND the user
 ///   has never authenticated yet. Mark current version as seen
-///   silently — a brand-new user shouldn't be greeted by a pop-up
+///   silently, a brand-new user shouldn't be greeted by a pop-up
 ///   about features they've never not had.
 /// - Upgrade from a pre-Changelog version (0.3.2 or earlier):
 ///   `lastSeenVersion` is empty BUT the user is authenticated, so
@@ -19,7 +19,7 @@ import Foundation
 ///   updated from a Changelog-aware version.
 ///
 /// The `isExistingUser` discriminator is passed in by AppRouter
-/// after `restoreSession()` finishes — it's based on
+/// after `restoreSession()` finishes, it's based on
 /// `appState.isAuthenticated`, which is the strongest signal that
 /// a non-empty `lastSeenVersion` simply hasn't existed yet (rather
 /// than "this is a brand-new install").
@@ -61,7 +61,7 @@ enum ChangelogPreferences {
         UserDefaults.standard.set(currentVersion, forKey: storeKey)
     }
 
-    /// Bootstrap on first install — flips lastSeenVersion to current
+    /// Bootstrap on first install, flips lastSeenVersion to current
     /// without showing the modal. Idempotent: a re-call after an
     /// upgrade does nothing because lastSeenVersion is already set.
     static func bootstrapIfNeeded() {

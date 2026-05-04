@@ -14,7 +14,7 @@ struct ProfileSettingsView: View {
     /// Pushed `true` when the add-profile flow lands back on this
     /// view via `loginDidComplete`. Without an explicit focus push
     /// the popped stack leaves the focus engine with nothing to
-    /// land on — Menu then escapes the navigation hierarchy and
+    /// land on, Menu then escapes the navigation hierarchy and
     /// quits the app.
     @FocusState private var addProfileButtonFocused: Bool
 
@@ -94,7 +94,7 @@ struct ProfileSettingsView: View {
     /// All remembered profiles laid out side-by-side, with a green
     /// check-badge on the one that's currently signed in. Replaces
     /// the older "Currently signed in" + separate "Switch profile"
-    /// section split — single grid reads as the same picker the
+    /// section split, single grid reads as the same picker the
     /// app shows on cold launch, just with the active session
     /// pre-marked.
     @ViewBuilder
@@ -128,7 +128,7 @@ struct ProfileSettingsView: View {
                                 isCurrent: isCurrent,
                                 onSelect: {
                                     // Tap on the active session is a
-                                    // no-op — staying signed in as the
+                                    // no-op, staying signed in as the
                                     // current user is the default state
                                     // already.
                                     guard !isCurrent else { return }
@@ -177,7 +177,7 @@ struct ProfileSettingsView: View {
             }
             // The default tvOS bordered style fills with the active
             // tint and propagates that same tint into the Label's
-            // text + icon — pink-on-pink (or whichever accent is
+            // text + icon, pink-on-pink (or whichever accent is
             // chosen) leaves the text invisible. SettingsTileButtonStyle
             // uses white-opacity for fill and lets the label render in
             // the primary foreground, so contrast holds across every
@@ -292,7 +292,7 @@ struct ProfileSettingsView: View {
             refresh()
 
             // Carry the Seerr session for this profile across the
-            // switch — each Jellyfin user has their own Seerr login
+            // switch, each Jellyfin user has their own Seerr login
             // saved separately in the keychain. If the stored cookie
             // turns out to be invalid we drop it and fall back to a
             // disconnected state; the user re-auths once and it
@@ -376,7 +376,7 @@ struct ProfileSettingsView: View {
         if let seerrUser = try? await dependencies.seerrAuthService.currentUser() {
             appState.setSeerrConnected(server: seerrServer, user: seerrUser)
         } else {
-            // Stored cookie no longer valid — forget just this
+            // Stored cookie no longer valid, forget just this
             // profile's entry so the user only has to re-auth
             // Seerr once, not wipe every remembered profile.
             dependencies.forgetRememberedSeerr(

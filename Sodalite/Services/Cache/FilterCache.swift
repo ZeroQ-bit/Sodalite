@@ -8,7 +8,7 @@ import Foundation
 ///   `JellyfinItem` blobs so a re-tap can render the grid the moment
 ///   the view appears, before any network roundtrip.
 ///
-/// - **smartFilterIDs**: TMDB id list for a Home provider tile —
+/// - **smartFilterIDs**: TMDB id list for a Home provider tile,
 ///   kept around even when the items themselves are cached, so a
 ///   downstream module that wants just the ids (e.g. for counting)
 ///   doesn't have to walk the full item array.
@@ -23,7 +23,7 @@ import Foundation
 ///
 /// Backed by per-key JSON files in `Library/Caches/FilterCache/`.
 /// Originally lived in `UserDefaults`, but tvOS enforces a 1 MB hard
-/// cap per app domain on `CFPreferences` writes — and a fully
+/// cap per app domain on `CFPreferences` writes, and a fully
 /// populated provider tile (50+ JellyfinItem blobs with overview,
 /// image tags, media streams, …) routinely exceeds that, which
 /// crashes the app with SIGABRT inside `defaults.set` on the very
@@ -33,7 +33,7 @@ import Foundation
 ///
 /// Thread safety: filesystem reads + writes are atomic at the OS
 /// level, and we only read/write whole files. `@unchecked Sendable`
-/// is therefore safe — there's no shared mutable state in the type
+/// is therefore safe, there's no shared mutable state in the type
 /// itself, just the directory pointer. Synchronous API throughout
 /// so SwiftUI views can hit the cache from inside `init()` and have
 /// the cached value populate `@State` in the same render pass.
@@ -125,7 +125,7 @@ final class FilterCache: @unchecked Sendable {
 
     // MARK: - Bulk invalidation
 
-    /// Clears every cache slice — called on profile switch / logout
+    /// Clears every cache slice, called on profile switch / logout
     /// so a new user doesn't see the previous user's filter results.
     func clearAll() {
         guard let entries = try? FileManager.default.contentsOfDirectory(

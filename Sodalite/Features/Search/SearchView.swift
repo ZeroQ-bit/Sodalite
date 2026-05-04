@@ -60,7 +60,7 @@ struct SearchView: View {
     /// Collect every poster URL the current results expose and hand
     /// them to `ImageCache.prefetch`. Skips URLs already cached, so
     /// running this on every results-change costs nothing for the
-    /// stable items between two queries — only the *new* posters
+    /// stable items between two queries, only the *new* posters
     /// pay network.
     private func prefetchSearchPosters() {
         guard let vm = viewModel else { return }
@@ -87,7 +87,7 @@ struct SearchView: View {
     /// SwiftUI's TextField on tvOS routes focus unreliably between the
     /// tab bar and card rows (silently skipped by the focus engine);
     /// .searchable() works but adds a 1-2s rebuild on every tab-switch.
-    /// UITextField is a first-class UIKit focus citizen — routing is
+    /// UITextField is a first-class UIKit focus citizen, routing is
     /// reliable and there's no switch-lag, with the inline look the
     /// user wants.
     @ViewBuilder
@@ -177,7 +177,7 @@ struct SearchView: View {
             }
             // Mark each row as its own focus section so vertical
             // navigation crosses row boundaries even when the geometry
-            // doesn't line up — e.g. the user is on a catalog card
+            // doesn't line up, e.g. the user is on a catalog card
             // way to the right, but the library row above only has
             // one item on the left. Without this, tvOS finds no
             // element directly overhead and up-press does nothing.

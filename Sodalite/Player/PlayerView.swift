@@ -7,7 +7,7 @@ import AVFoundation
 /// Presents PlayerHostController as a UIKit modal (NOT SwiftUI fullScreenCover).
 ///
 /// On tvOS, SwiftUI's fullScreenCover intercepts the Menu button at the
-/// presentation level — pressesBegan, .onExitCommand, and gesture recognizers
+/// presentation level, pressesBegan, .onExitCommand, and gesture recognizers
 /// on child VCs never receive it. UIKit modals don't have this problem:
 /// UITapGestureRecognizer for .menu on the presented VC's view works.
 struct PlayerLauncher: UIViewControllerRepresentable {
@@ -68,7 +68,7 @@ final class PlayerLauncherHostVC: UIViewController {
 
 /// Full-screen video player that handles ALL Siri Remote input.
 ///
-/// Presented via UIKit `present(_:animated:)` — NOT SwiftUI fullScreenCover.
+/// Presented via UIKit `present(_:animated:)`, NOT SwiftUI fullScreenCover.
 /// This is critical: UIKit modals allow UITapGestureRecognizer to intercept
 /// the Menu button, while SwiftUI fullScreenCover steals it at the
 /// presentation level.
@@ -85,14 +85,14 @@ final class PlayerHostController: UIViewController {
     /// `onVideoLayerReplaced` callback and the "undefined behavior"
     /// warnings in SampleBufferRenderer). When that happens we need to
     /// pull the old sublayer out of our view hierarchy and drop the new
-    /// one in — otherwise the host view keeps pointing at a stale layer
+    /// one in, otherwise the host view keeps pointing at a stale layer
     /// that AetherEngine no longer feeds.
     private var hostedVideoLayer: CALayer?
 
     /// True only between `didEnterBackground` and the next
     /// `didBecomeActive`. The Apple TV app switcher (double Home)
     /// fires `willResignActive` but NOT `didEnterBackground`, so it
-    /// leaves this false — and we use that signal to skip the
+    /// leaves this false, and we use that signal to skip the
     /// reload-and-pause routine. Pure full-background returns
     /// (Home button, screensaver, AirPlay nag handing focus away)
     /// keep the existing pause-on-resume behaviour.
@@ -115,11 +115,11 @@ final class PlayerHostController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .black
 
-        // Video layer — set the frame before attaching so we don't
+        // Video layer, set the frame before attaching so we don't
         // hand the compositor a layer at 0×0. viewDidLayoutSubviews
         // keeps it in sync after this, but the *first* frame the
         // decoder emits has already been routed to this layer by
-        // then, and on an unlaidout layer that frame is dropped —
+        // then, and on an unlaidout layer that frame is dropped,
         // the screen stays black until a seek re-primes the pipeline.
         let layer = viewModel.player.videoLayer
         view.layoutIfNeeded()
@@ -149,7 +149,7 @@ final class PlayerHostController: UIViewController {
         }
 
         // SwiftUI overlays (display-only). `.tint(...)` has to be
-        // applied here because this hosted view lives in a UIKit modal —
+        // applied here because this hosted view lives in a UIKit modal,
         // the WindowGroup tint set on SodaliteApp never reaches it.
         let overlay = PlayerOverlayView(
             viewModel: viewModel,
@@ -226,7 +226,7 @@ final class PlayerHostController: UIViewController {
         super.viewWillDisappear(animated)
         // Only stop playback if the VC is actually being dismissed.
         // Display mode switches (HDR/SDR) briefly trigger viewWillDisappear
-        // without actually dismissing — don't kill playback for that.
+        // without actually dismissing, don't kill playback for that.
         guard isBeingDismissed || isMovingFromParent else { return }
         hostedVideoLayer?.removeFromSuperlayer()
         viewModel.player.onVideoLayerReplaced = nil
@@ -235,13 +235,13 @@ final class PlayerHostController: UIViewController {
 
     private func swapVideoLayer(to newLayer: CALayer) {
         hostedVideoLayer?.removeFromSuperlayer()
-        // Force layout before reading view.bounds — swapVideoLayer can
+        // Force layout before reading view.bounds, swapVideoLayer can
         // fire during the initial load while viewDidLayoutSubviews
         // hasn't run yet, and view.bounds is still the nominal value
         // from when the modal was presented. Inserting a layer with a
         // zero-sized frame hides it until the next layout pass, and
         // by then the decoder has already fed the first frame into
-        // the void — leaving the screen black until a seek re-primes.
+        // the void, leaving the screen black until a seek re-primes.
         view.layoutIfNeeded()
         CATransaction.begin()
         CATransaction.setDisableActions(true)
@@ -261,7 +261,7 @@ final class PlayerHostController: UIViewController {
         // App switcher (double Home, swipe between recents) lands
         // here without ever firing didEnterBackground. The decoder
         // sessions are still alive, the audio is still synced, so
-        // there's nothing to rebuild and nothing to pause — let
+        // there's nothing to rebuild and nothing to pause, let
         // playback continue uninterrupted.
         guard wasFullyBackgrounded else { return }
         wasFullyBackgrounded = false
@@ -270,7 +270,7 @@ final class PlayerHostController: UIViewController {
         // Without an explicit re-activation here, the post-reload
         // pause()/resume() sequence drives a synchronizer whose
         // audio renderer has no live session to push samples
-        // through — the user pressed Play, the state machine
+        // through, the user pressed Play, the state machine
         // flipped to .playing, but no audio came out and no
         // frames advanced. Re-arming the session before the
         // pipeline rebuild fixes it.
@@ -280,10 +280,10 @@ final class PlayerHostController: UIViewController {
         // reload the pipeline from the current position. After the
         // reload, hold the player paused on the resumed frame and
         // surface the controls so the user has to press Play
-        // deliberately — auto-resuming after a sleep / Home /
+        // deliberately, auto-resuming after a sleep / Home /
         // screensaver gap is startling.
         //
-        // No artificial settle delay needed any more — AetherEngine's
+        // No artificial settle delay needed any more, AetherEngine's
         // load() now blocks until audio is genuinely flowing through
         // the pipeline (or 2s timeout) before resuming the caller,
         // so pause() right after has a fully wired-up synchronizer
@@ -300,8 +300,8 @@ final class PlayerHostController: UIViewController {
     @objc private func selectPressed() {
         // Skip Intro takes priority over any transient scrub state.
         // The Siri Remote touchpad reports a tiny pan in the milliseconds
-        // before its click registers — easily past the 40pt scrub
-        // threshold — which flips both showControls and isScrubbing
+        // before its click registers, easily past the 40pt scrub
+        // threshold, which flips both showControls and isScrubbing
         // true. Without this guard the user's tap to dismiss the intro
         // would land in the commit-scrub branch and reopen the player
         // UI instead of skipping. The hint overlay only shows when
@@ -316,7 +316,7 @@ final class PlayerHostController: UIViewController {
         }
 
         // Next-episode commandeers Select only when the transport is
-        // hidden — otherwise the user is interacting with the control
+        // hidden, otherwise the user is interacting with the control
         // overlay (scrubbing, picking a track) and a surprise next
         // would be destructive.
         if !viewModel.showControls && !viewModel.isDropdownOpen {
@@ -403,7 +403,7 @@ final class PlayerHostController: UIViewController {
         var order: [PlayerViewModel.ControlsFocus] = []
         if viewModel.isInsideIntro { order.append(.skipIntroButton) }
         if viewModel.seasonEpisodes.count > 1 { order.append(.episodeButton) }
-        // Mirror TransportBar's chapter-button visibility gate — same
+        // Mirror TransportBar's chapter-button visibility gate, same
         // "hide on series episodes" rule, otherwise focus could land on
         // a button that isn't being rendered.
         if viewModel.chapters.count > 1, viewModel.seasonEpisodes.count <= 1 {
@@ -426,11 +426,11 @@ final class PlayerHostController: UIViewController {
         } else if viewModel.showControls {
             switch viewModel.controlsFocus {
             case .progressBar:
-                // Preserve scrub state — user can confirm/cancel when returning
+                // Preserve scrub state, user can confirm/cancel when returning
                 let hasAudio = !viewModel.player.audioTracks.isEmpty
                 let hasSubs = !viewModel.subtitleStreams.isEmpty
                 let hasEpisodes = viewModel.seasonEpisodes.count > 1
-                // Mirror the TransportBar visibility gate — chapter
+                // Mirror the TransportBar visibility gate, chapter
                 // button is suppressed for series episodes.
                 let hasChapters = viewModel.chapters.count > 1 && !hasEpisodes
                 if viewModel.isInsideIntro { viewModel.controlsFocus = .skipIntroButton }
@@ -571,7 +571,7 @@ final class PlayerHostController: UIViewController {
             viewModel.scheduleControlsHide()
         case .episode(let idx):
             viewModel.trackDropdown = .none
-            // Hand the actual switch off to a Task — selectEpisode tears
+            // Hand the actual switch off to a Task, selectEpisode tears
             // down the existing playback session and starts a fresh one
             // (network roundtrip + decoder restart). We don't want the
             // confirm-button press to block the main thread on that.
@@ -635,17 +635,17 @@ final class PlayerHostController: UIViewController {
     /// swipe doesn't accidentally trigger vertical navigation.
     private static let panAxisCommitThreshold: CGFloat = 40
     /// Travel (pt) on the committed vertical axis before we fire an
-    /// up/down — one fire per gesture, matching the single-shot feel
+    /// up/down, one fire per gesture, matching the single-shot feel
     /// of pressing the arrow keys.
     private static let verticalFireThreshold: CGFloat = 150
     /// Travel (pt) on a horizontal swipe before we fire left/right when
     /// the swipe is being used for transport-button navigation rather
-    /// than scrubbing — same single-shot behaviour as vertical.
+    /// than scrubbing, same single-shot behaviour as vertical.
     private static let horizontalFireThreshold: CGFloat = 150
     /// Minimum velocity (pt/s) for a step-firing pan to count as an
     /// intentional swipe. The Siri Remote's touchpad reports tiny
     /// finger drift while the user is just resting their finger before
-    /// a click — over a second or two that drift can accumulate past
+    /// a click, over a second or two that drift can accumulate past
     /// the distance threshold above and steal focus to the wrong
     /// button. Requiring velocity as well filters out the slow drift
     /// case while still letting any real swipe through (typical
@@ -655,7 +655,7 @@ final class PlayerHostController: UIViewController {
     @objc private func handlePan(_ gesture: UIPanGestureRecognizer) {
         if viewModel.isDropdownOpen {
             // Vertical swipe navigates dropdown items.
-            // Uses total translation divided into steps — each 120pt of
+            // Uses total translation divided into steps, each 120pt of
             // cumulative movement = one item. Prevents over-scrolling
             // on fast swipes.
             switch gesture.state {
@@ -732,7 +732,7 @@ final class PlayerHostController: UIViewController {
                 break
             }
         case .ended, .cancelled:
-            // Only finalise a scrub when the pan was actually scrubbing —
+            // Only finalise a scrub when the pan was actually scrubbing,
             // horizontal-into-navigation doesn't touch the timeline, so
             // no scrubPanEnded() to commit or cancel.
             if panAxis == .horizontal && horizontalScrubs {
@@ -809,14 +809,14 @@ private struct PlayerOverlayView: View {
                 controlsOverlay
             }
 
-            // Top-right info column — HDR badge (only with controls,
+            // Top-right info column, HDR badge (only with controls,
             // matches Apple TV's own player) and Speed badge (always
             // when rate ≠ 1.0× so the user remembers they sped things
             // up after the transport hides). Stacks vertically when
             // both are visible.
             topRightInfoColumn
 
-            // Floating Skip Intro hint — only while the full controls
+            // Floating Skip Intro hint, only while the full controls
             // are hidden. When they open, the skip action becomes a
             // proper focusable button inside TransportBar instead.
             if viewModel.isInsideIntro
@@ -942,7 +942,7 @@ private struct PlayerOverlayView: View {
         }
         // Fixed 16:9 card. Both the image and the content above use
         // the same explicit 380x214 frame, so the ZStack itself is
-        // exactly that size — nothing intrinsic-leaking can stretch
+        // exactly that size, nothing intrinsic-leaking can stretch
         // it into a portrait.
         .frame(width: 380, height: 214)
         .background(.thinMaterial)
@@ -967,7 +967,7 @@ private struct PlayerOverlayView: View {
 
     /// Build the chapter-thumbnail URL using Jellyfin's
     /// `/Items/{id}/Images/Chapter/{index}` endpoint. Returns nil
-    /// when the chapter has no `imageTag` — the dropdown then falls
+    /// when the chapter has no `imageTag`, the dropdown then falls
     /// back to its compact text-only row layout.
     private func chapterThumbnailURL(for index: Int) -> URL? {
         guard let baseURL = viewModel.playbackService.baseURL,
@@ -1045,7 +1045,7 @@ private struct PlayerOverlayView: View {
 private extension PlayerOverlayView {
     /// Stack of informational badges in the top-right corner. The
     /// HDR badge follows the transport's visibility (Apple TV's own
-    /// player does the same — informational, not action-required),
+    /// player does the same, informational, not action-required),
     /// while the speed badge is persistent whenever the rate isn't
     /// 1.0× so a user who set 1.5× and then hid the transport doesn't
     /// silently keep watching at the wrong speed.
@@ -1057,7 +1057,7 @@ private extension PlayerOverlayView {
                     if viewModel.showControls && viewModel.videoFormat != .sdr {
                         VideoFormatBadge(format: viewModel.videoFormat)
                     }
-                    // Index 2 is 1.0× — the picker default. Anything
+                    // Index 2 is 1.0×, the picker default. Anything
                     // else (0.5/0.75/1.25/1.5/2.0) flips the badge on.
                     if viewModel.activeSpeedIndex != 2 {
                         SpeedBadge(index: viewModel.activeSpeedIndex)

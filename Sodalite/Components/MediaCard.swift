@@ -10,7 +10,7 @@ struct MediaCard: View {
     let imageURL: URL?
     let style: MediaCardStyle
 
-    /// Set by the caller — either forwarded from `FocusableCard`'s
+    /// Set by the caller, either forwarded from `FocusableCard`'s
     /// content closure or derived from a surrounding `@FocusState`
     /// (`focusedID == item.id`). tvOS's `@Environment(\.isFocused)`
     /// doesn't propagate reliably through Button labels, so we pass
@@ -71,7 +71,7 @@ struct MediaCard: View {
             progressOverlay
         }
         .overlay(
-            // Outer stroke — padding(-3) pushes the overlay frame 3pt
+            // Outer stroke, padding(-3) pushes the overlay frame 3pt
             // past the image edge, so the border sits *around* the card
             // rather than eating into it. Outer corner radius is
             // card radius + stroke width so the curve stays concentric.
@@ -84,8 +84,8 @@ struct MediaCard: View {
     }
 
     private var itemInfo: some View {
-        // Always render the subtitle slot — even with an empty
-        // string — so cards in a row stay the same total height.
+        // Always render the subtitle slot, even with an empty
+        // string, so cards in a row stay the same total height.
         // Otherwise items without a subtitle (BoxSets without a
         // year, episodes from very thinly-scraped libraries) make
         // the row's vertical centering kick in and the titles end

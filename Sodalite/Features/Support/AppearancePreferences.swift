@@ -3,11 +3,11 @@ import Observation
 import SwiftUI
 
 /// Cosmetic choices unlocked by the Supporter Pack. Non-supporters are
-/// pinned to `.system` defaults at read time — the stored value stays
+/// pinned to `.system` defaults at read time, the stored value stays
 /// intact so we don't wipe a selection after a refund-then-repurchase
 /// cycle.
 ///
-/// Backed by `UserDefaults`, not the Keychain — none of this is sensitive
+/// Backed by `UserDefaults`, not the Keychain, none of this is sensitive
 /// and losing the preference on wipe is fine.
 @Observable
 @MainActor
@@ -34,7 +34,7 @@ final class AppearancePreferences {
 
         /// Localized display name. Resolved inside the enum so both
         /// arguments to `String(localized:defaultValue:)` stay as
-        /// compile-time string literals — the initializer can't accept
+        /// compile-time string literals, the initializer can't accept
         /// runtime `String.LocalizationValue` values.
         var title: String {
             switch self {
@@ -61,14 +61,14 @@ final class AppearancePreferences {
             }
         }
 
-        /// Hex chosen to work against the dark Liquid-Glass backdrop —
+        /// Hex chosen to work against the dark Liquid-Glass backdrop,
         /// punchy but not neon, all sitting around L≈0.65–0.75 so text
         /// drawn on top in `.tint` stays legible. Swatches render
         /// straight from these.
         ///
         /// `.system` hard-codes the asset-catalog accent RGB rather
         /// than `Color.accentColor`, because the semantic value
-        /// follows the current `.tint(...)` in the environment —
+        /// follows the current `.tint(...)` in the environment,
         /// otherwise the swatch would shift with whatever custom
         /// color is active and stop reading as "System Blue".
         var color: Color {
@@ -118,7 +118,7 @@ final class AppearancePreferences {
 
     /// The Color to pass into SwiftUI's `.tint(_:)`. Returns `nil` for
     /// the `.system` case so we don't override SwiftUI's default tint
-    /// with a self-referential `Color.accentColor` — which, if the
+    /// with a self-referential `Color.accentColor`, which, if the
     /// `AccentColor.colorset` ever ends up empty or stale, resolves to
     /// white and makes every tinted button unreadable.
     func effectiveTint(isSupporter: Bool) -> Color? {

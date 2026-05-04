@@ -22,7 +22,7 @@ struct SeerrRequestMedia: Codable, Sendable, Equatable {
     let externalServiceId: Int?
     /// Live Sonarr/Radarr queue snapshot Seerr fills at request
     /// time. An empty array (or `nil` from older Seerr versions)
-    /// means no queue entry — paired with `status = .processing`
+    /// means no queue entry, paired with `status = .processing`
     /// that's the most reliable "Sonarr was told to download this,
     /// then it disappeared from the queue (cancelled, removed,
     /// killed)" signal we have. Service ids stick around in
@@ -33,7 +33,7 @@ struct SeerrRequestMedia: Codable, Sendable, Equatable {
 }
 
 /// Minimal stand-in for a Sonarr/Radarr queue entry. We only need
-/// to know whether the array has anything in it — the granular
+/// to know whether the array has anything in it, the granular
 /// fields aren't read anywhere. Optional fields decode to `nil`
 /// when missing so we stay forwards-compatible with whatever
 /// shape Seerr's downloadStatus payload takes.

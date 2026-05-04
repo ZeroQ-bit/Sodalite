@@ -10,7 +10,7 @@ import SwiftUI
 /// splash never just blinks past on a fast session restore.
 ///
 /// Supporters see the crowned "Premium" variant. Everyone else sees
-/// the standard Sodalite gem — both render in their full sodalite-blue
+/// the standard Sodalite gem, both render in their full sodalite-blue
 /// brand colors, no template tint.
 struct SplashView: View {
 

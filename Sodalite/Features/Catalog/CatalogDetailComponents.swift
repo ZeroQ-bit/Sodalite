@@ -2,12 +2,12 @@ import SwiftUI
 
 /// Sub-components extracted from CatalogDetailView so the main file
 /// stays focused on the load/render flow. Lives in the same target,
-/// so the previously-private types are simply demoted to internal —
+/// so the previously-private types are simply demoted to internal,
 /// nothing outside the catalog feature uses them anyway.
 
 /// Season tab used inside the season selection block. The tab is
-/// always selectable for *viewing* — even seasons that are already
-/// available get tabs so the user can preview their episodes — but
+/// always selectable for *viewing*, even seasons that are already
+/// available get tabs so the user can preview their episodes, but
 /// the request action is gated separately inside the detail block.
 struct CatalogSeasonTab: View {
     let season: SeerrSeason
@@ -18,7 +18,7 @@ struct CatalogSeasonTab: View {
     /// → blue spinner-ish icon, `.pending` → orange clock. Earlier
     /// versions collapsed all three into a single green check, which
     /// hid the difference between "ready to play" and "waiting for
-    /// the admin to approve" — a meaningful distinction for the user.
+    /// the admin to approve", a meaningful distinction for the user.
     let availabilityStatus: SeerrMediaStatus?
     let action: () -> Void
 
@@ -105,7 +105,7 @@ struct CatalogPickerButtonStyle: ButtonStyle {
 // MARK: - Picker Sheet
 
 /// Full-screen picker for the profile / root-folder dropdowns.
-/// `.fullScreenCover` gives the sheet its own focus environment —
+/// `.fullScreenCover` gives the sheet its own focus environment,
 /// the Menu-button dismisses only this modal, no chance of
 /// propagating up to the navigation stack and accidentally
 /// exiting the app (which is what happened with SwiftUI `Menu`
@@ -172,7 +172,7 @@ struct CatalogPickerSheet: View {
         }
         .onAppear {
             // Focus the currently-selected option on appear, or the
-            // first one if nothing's selected — so the back-press gap
+            // first one if nothing's selected, so the back-press gap
             // never hits an empty focus.
             focusedID = selectedID ?? options.first?.id
         }

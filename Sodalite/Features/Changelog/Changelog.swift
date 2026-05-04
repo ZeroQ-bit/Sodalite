@@ -7,7 +7,7 @@ import Foundation
 /// after the user updates, and the same entries are listed in
 /// Settings → "What's New" for browsing later.
 ///
-/// Keep highlights short and concrete — bullet items, not paragraphs.
+/// Keep highlights short and concrete, bullet items, not paragraphs.
 /// Group by kind: `.new` for fresh features, `.improve` for noticeable
 /// quality-of-life upgrades, `.fix` for user-visible bug fixes that
 /// previously affected behaviour.

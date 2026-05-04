@@ -4,7 +4,7 @@ import AetherEngine
 /// Formats TrackInfo into localized display strings for the player UI.
 ///
 /// Uses `Locale.current.localizedString(forLanguageCode:)` for language
-/// names — automatically localized by Apple's frameworks (e.g. "en" →
+/// names, automatically localized by Apple's frameworks (e.g. "en" →
 /// "Englisch" on a German device, "英語" on Japanese).
 ///
 /// Audio format: "Deutsch · Dolby Digital 5.1"
@@ -23,7 +23,7 @@ enum TrackDisplayFormatter {
 
         // Atmos overrides the bed-channel description: a track that's
         // 5.1 + JOC objects is universally branded as "Dolby Atmos",
-        // not "Dolby Digital+ 5.1" — which is what the user sees on
+        // not "Dolby Digital+ 5.1", which is what the user sees on
         // every other Atmos-aware UI.
         if track.isAtmos {
             parts.append("Dolby Atmos")

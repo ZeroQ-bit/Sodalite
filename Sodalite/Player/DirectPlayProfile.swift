@@ -4,7 +4,7 @@ import Foundation
 ///
 /// AetherEngine demuxes MKV/MP4/AVI/TS natively via FFmpeg, so we can
 /// direct-play far more containers than AVPlayer. This drastically
-/// reduces server-side transcoding — the server only needs to re-encode
+/// reduces server-side transcoding, the server only needs to re-encode
 /// when the actual codec is unsupported (e.g. MPEG-2, VC-1).
 ///
 /// Two flavors based on display capabilities (see `DisplayCapabilities`):
@@ -13,7 +13,7 @@ import Foundation
 ///   Main10 HDR10 / Dolby Vision / HLG with multichannel audio.
 ///
 /// - `conservativeSDRProfile`: SDR display. HDR content is still
-///   direct-played — VideoToolbox handles the conversion.
+///   direct-played, VideoToolbox handles the conversion.
 @MainActor
 enum DirectPlayProfile {
 
@@ -31,7 +31,7 @@ enum DirectPlayProfile {
     /// Profile for HDR-capable Apple TV setups (HDR display + Match
     /// Dynamic Range on). AetherEngine handles HEVC Main10, HDR10,
     /// Dolby Vision (Profile 5/8.1/8.4), HLG, and multichannel audio.
-    /// Server only has to remux containers — no re-encoding.
+    /// Server only has to remux containers, no re-encoding.
     static func permissiveHDRProfile() -> [String: Any] {
         [
             "MaxStreamingBitrate": 200_000_000,
@@ -44,7 +44,7 @@ enum DirectPlayProfile {
                     "Container": "mp4,m4v,mov,mkv,matroska,avi,mpegts,ts,ogg,webm,flv",
                     "Type": "Video",
                     "VideoCodec": "h264,hevc,av1,vp9",
-                    // Jellyfin reports DTS variants inconsistently — some
+                    // Jellyfin reports DTS variants inconsistently, some
                     // builds use `dts`, some `dca`, some `dts-hd`. Listing
                     // every spelling we've seen stops the server from
                     // kicking DTS-HD MA into a transcode just because our
@@ -96,7 +96,7 @@ enum DirectPlayProfile {
     /// compatible codecs instead of re-encoding them. Server-side
     /// transcoding is the absolute last resort.
     ///
-    /// HDR sources are intentionally NOT constrained here — VideoToolbox
+    /// HDR sources are intentionally NOT constrained here, VideoToolbox
     /// handles HDR-on-SDR conversion automatically.
     static func conservativeSDRProfile() -> [String: Any] {
         [
@@ -110,7 +110,7 @@ enum DirectPlayProfile {
                     "Container": "mp4,m4v,mov,mkv,matroska,avi,mpegts,ts,ogg,webm,flv",
                     "Type": "Video",
                     "VideoCodec": "h264,hevc,av1,vp9",
-                    // Jellyfin reports DTS variants inconsistently — some
+                    // Jellyfin reports DTS variants inconsistently, some
                     // builds use `dts`, some `dca`, some `dts-hd`. Listing
                     // every spelling we've seen stops the server from
                     // kicking DTS-HD MA into a transcode just because our
@@ -151,7 +151,7 @@ enum DirectPlayProfile {
 
     // MARK: - Subtitles (shared)
 
-    /// All subtitle formats delivered externally — we fetch them as SRT
+    /// All subtitle formats delivered externally, we fetch them as SRT
     /// via the Jellyfin subtitle API (server converts any format to SRT).
     /// This prevents Jellyfin from transcoding the entire video stream
     /// just because a subtitle codec is "unsupported".

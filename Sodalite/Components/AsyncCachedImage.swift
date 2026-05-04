@@ -6,7 +6,7 @@ import UIKit
 /// need:
 ///
 /// 1. Attach the Jellyfin access token on every request via the
-///    `X-Emby-Token` header — SwiftUI's AsyncImage uses
+///    `X-Emby-Token` header, SwiftUI's AsyncImage uses
 ///    URLSession.shared with no way to inject headers, so servers
 ///    that require auth for image endpoints (the default on modern
 ///    Jellyfin) silently 401 the request and leave the view on the
@@ -57,7 +57,7 @@ struct AsyncCachedImage<Content: View, Placeholder: View>: View {
             return
         }
 
-        // Build the request on MainActor — we need to read the
+        // Build the request on MainActor, we need to read the
         // Jellyfin client's token, which is MainActor-isolated.
         // Attach the auth header only for requests to the active
         // Jellyfin host; external URLs (TMDB posters in the Seerr
@@ -75,7 +75,7 @@ struct AsyncCachedImage<Content: View, Placeholder: View>: View {
         // Persist to cache *before* the cancellation check. A tab
         // switch (or any upstream `.task(id:)` invalidation) may
         // cancel us between the successful decode and the @State
-        // write — but the bytes are already in memory. Skipping the
+        // write, but the bytes are already in memory. Skipping the
         // cache here meant the next mount paid the bandwidth + decode
         // again for the same URL, which on a flaky connection or a
         // 30-season show with 20 stills per tab adds up fast.
@@ -121,14 +121,14 @@ final class ImageCache: @unchecked Sendable {
     nonisolated(unsafe) static let shared = ImageCache()
 
     // NSCache is documented thread-safe and the wrapper holds no
-    // Swift-level mutable state besides this — `nonisolated(unsafe)`
+    // Swift-level mutable state besides this, `nonisolated(unsafe)`
     // lets the prefetch path call `store` from background tasks
     // without round-tripping to MainActor per image.
     nonisolated(unsafe) private let cache: NSCache<NSURL, UIImage>
 
     /// Cost-based eviction. Each store carries its decoded byte
     /// size as cost, so NSCache auto-evicts when the total exceeds
-    /// the limit — enough for a couple of fully-populated home
+    /// the limit, enough for a couple of fully-populated home
     /// rows plus a detail backdrop on a 4K display, but bounded so
     /// a long browsing session doesn't keep growing into hundreds
     /// of MB. countLimit stays generous so it's not the gating
@@ -152,7 +152,7 @@ final class ImageCache: @unchecked Sendable {
     }
 
     /// Wipe the cache on events that should invalidate previous
-    /// fetches — primarily profile switches, where a cached poster
+    /// fetches, primarily profile switches, where a cached poster
     /// loaded with user A's token might be unfetchable with user
     /// B's permissions.
     func clear() {
@@ -177,8 +177,8 @@ extension ImageCache {
     /// concurrency, and silently drops failures (a 404 on one
     /// poster shouldn't disrupt the others). Intended for results
     /// lists where the host knows about a set of URLs the user is
-    /// likely to focus shortly — search results, library grids,
-    /// next-episode hints — so the first focus doesn't hit
+    /// likely to focus shortly, search results, library grids,
+    /// next-episode hints, so the first focus doesn't hit
     /// network/decode latency.
     ///
     /// `authToken` + `jellyfinHost` mirror the auth handling in
@@ -196,7 +196,7 @@ extension ImageCache {
         await withTaskGroup(of: Void.self) { group in
             // 6 in flight is enough to saturate a typical home LAN
             // without pushing simultaneous foreground fetches off
-            // the wire — empirical sweet spot, the same number
+            // the wire, empirical sweet spot, the same number
             // URLSession defaults to per host.
             let maxConcurrent = 6
             var iter = pending.makeIterator()
@@ -235,7 +235,7 @@ extension ImageCache {
             let prepared = image.preparingForDisplay() ?? image
             ImageCache.shared.store(prepared, for: url)
         } catch {
-            // Cache prefetch is best-effort — a transient failure
+            // Cache prefetch is best-effort, a transient failure
             // just means the AsyncCachedImage on first focus pays
             // the round-trip itself, same as without prefetch.
         }

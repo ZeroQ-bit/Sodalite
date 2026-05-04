@@ -10,13 +10,13 @@ enum PurchaseOutcome: Sendable {
     case success
     /// User backed out of the purchase sheet.
     case userCancelled
-    /// Waiting on a parental approval or SCA challenge — no entitlement yet,
+    /// Waiting on a parental approval or SCA challenge, no entitlement yet,
     /// but a later `Transaction.updates` callback may still grant one.
     case pending
 }
 
 enum StoreKitServiceError: Error {
-    /// StoreKit returned an unverified JWS — someone forged a transaction
+    /// StoreKit returned an unverified JWS, someone forged a transaction
     /// or the App Store key is stale. Never trust the entitlement.
     case verificationFailed
 }
@@ -40,7 +40,7 @@ protocol StoreKitServiceProtocol: AnyObject {
 /// `isSupporter` flag that the UI reacts to.
 ///
 /// The service caches `isSupporter` in `UserDefaults` so the first frame
-/// after launch already reflects the last known entitlement state — the
+/// after launch already reflects the last known entitlement state, the
 /// authoritative refresh against `Transaction.currentEntitlements`
 /// happens asynchronously on app start and overwrites the cache.
 @MainActor
@@ -52,7 +52,7 @@ final class StoreKitService: StoreKitServiceProtocol {
     private(set) var isSupporter: Bool
     private(set) var tipProducts: [Product] = []
     private(set) var supporterPackProduct: Product?
-    /// True once a `Product.products(for:)` call has completed — regardless
+    /// True once a `Product.products(for:)` call has completed, regardless
     /// of whether it returned products or failed. The UI uses this to tell
     /// "still loading" apart from "loaded and the App Store gave us nothing".
     private(set) var hasLoadedProducts: Bool = false
@@ -74,7 +74,7 @@ final class StoreKitService: StoreKitServiceProtocol {
     init(store: UserDefaults = .standard) {
         self.store = store
         self.isSupporter = store.bool(forKey: Keys.cachedIsSupporter)
-        // The listener task runs for the lifetime of the app — the
+        // The listener task runs for the lifetime of the app, the
         // service is held by DependencyContainer, which itself lives
         // as long as the process. No cancel/deinit bookkeeping needed;
         // the task captures `self` weakly so it can't keep us alive.
@@ -138,7 +138,7 @@ final class StoreKitService: StoreKitServiceProtocol {
         // Forces a refresh against the App Store. Not needed for the
         // happy path (Transaction.currentEntitlements already knows
         // about non-consumables restored by Apple ID) but required by
-        // App Review — and covers the edge case where a device was
+        // App Review, and covers the edge case where a device was
         // offline the last time entitlements changed.
         try await AppStore.sync()
         await refreshSupporterStatus()
@@ -164,7 +164,7 @@ final class StoreKitService: StoreKitServiceProtocol {
         if StoreProducts.isSupporterPack(transaction.productID) {
             setSupporter(transaction.revocationDate == nil)
         }
-        // Tip purchases are consumables — nothing to unlock, they exist
+        // Tip purchases are consumables, nothing to unlock, they exist
         // purely for their own sake. Just finish them in the caller.
     }
 
@@ -181,7 +181,7 @@ final class StoreKitService: StoreKitServiceProtocol {
     }
 
     /// Background listener for transactions that arrive outside the main
-    /// purchase flow — parental approvals landing after `.pending`, Ask-
+    /// purchase flow, parental approvals landing after `.pending`, Ask-
     /// To-Buy completions, or purchases made on another device for the
     /// same Apple ID. Apple requires every app with IAP to attach a
     /// listener early in the lifecycle so nothing is missed.

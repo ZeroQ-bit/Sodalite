@@ -44,7 +44,7 @@ struct PlaybackMediaSource: Codable, Sendable, Identifiable {
 
 // MARK: - Media Segments
 
-/// Response from `/MediaSegments/{itemId}` — intro / outro / preview
+/// Response from `/MediaSegments/{itemId}`, intro / outro / preview
 /// markers. Populated natively on Jellyfin 10.10+, and by the
 /// intro-skipper plugin on 10.9.
 struct MediaSegmentsResponse: Codable, Sendable {
@@ -73,7 +73,7 @@ struct MediaSegment: Codable, Sendable, Identifiable {
         case endTicks = "EndTicks"
     }
 
-    /// Seconds — 10_000_000 ticks per second.
+    /// Seconds, 10_000_000 ticks per second.
     var startSeconds: Double { Double(startTicks) / 10_000_000 }
     var endSeconds: Double { Double(endTicks) / 10_000_000 }
 }

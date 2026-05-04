@@ -36,7 +36,7 @@ struct TransportBar: View {
     /// single-episode series; the episode-picker button is suppressed
     /// whenever count <= 1.
     let seasonEpisodes: [JellyfinItem]
-    /// ID of the episode currently playing — used to mark the active
+    /// ID of the episode currently playing, used to mark the active
     /// row in the dropdown and to compose the button label.
     let activeEpisodeID: String?
     /// Resolves the thumbnail URL for an episode row. Closure rather
@@ -47,7 +47,7 @@ struct TransportBar: View {
     /// when the file ships no chapters; the button is suppressed
     /// whenever count <= 1.
     let chapters: [ChapterInfo]
-    /// Total runtime in seconds — used to position the chapter ticks
+    /// Total runtime in seconds, used to position the chapter ticks
     /// along the progress bar.
     let durationSeconds: Double
     /// Resolves the chapter image URL given a chapter's index. The
@@ -239,7 +239,7 @@ struct TransportBar: View {
         }
     }
 
-    /// Currently-active chapter index — the last chapter whose start
+    /// Currently-active chapter index, the last chapter whose start
     /// is at or before the current playback progress. Nil only when
     /// the chapter list is empty (the button is hidden in that case
     /// anyway).
@@ -338,7 +338,7 @@ struct TransportBar: View {
         return prefix + episode.name
     }
 
-    /// "1×" / "1.5×" / "0.75×" — fixed-style, not localized (the × glyph
+    /// "1×" / "1.5×" / "0.75×", fixed-style, not localized (the × glyph
     /// and arabic digits are universal in the native tvOS player too).
     static func speedLabel(for index: Int) -> String {
         let rate = PlayerViewModel.speedOptions[
@@ -426,7 +426,7 @@ struct TransportBar: View {
                         }
                     }
                     .onAppear {
-                        // The first render needs an explicit scroll —
+                        // The first render needs an explicit scroll,
                         // .onChange only fires when the highlighted
                         // index *changes*, not for the value the
                         // dropdown was opened at. Without this the
@@ -449,7 +449,7 @@ struct TransportBar: View {
                 // instead of stretching the column wide enough to
                 // squeeze the rest of the transport buttons. Text-only
                 // dropdowns (audio / subs / speed / picture) have
-                // shorter content by nature — give them generous
+                // shorter content by nature, give them generous
                 // headroom so names like "Deutsch · Dolby TrueHD 7.1"
                 // don't truncate to "Deutsch · Dol…".
                 .frame(
@@ -497,14 +497,14 @@ struct TransportBar: View {
             let knobSize: CGFloat = active ? 22 : 14
 
             ZStack(alignment: .leading) {
-                // Unplayed track — stays white so the contrast against
+                // Unplayed track, stays white so the contrast against
                 // the played portion reads clearly regardless of which
                 // accent color the user picked.
                 Capsule()
                     .fill(.white.opacity(0.2))
                     .frame(height: trackHeight)
 
-                // Chapter markers — narrow vertical ticks at each
+                // Chapter markers, narrow vertical ticks at each
                 // chapter's start position. Drawn on top of the
                 // unplayed track and below the played portion so they
                 // appear muted-white in the unplayed section and

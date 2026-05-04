@@ -12,8 +12,8 @@ struct OpenSodaliteIntent: AppIntent {
     static let description = IntentDescription("Open the Sodalite app.")
     static let openAppWhenRun: Bool = true
     /// `.alwaysAllowed` lets tvOS-Siri voice-invoke the intent
-    /// without the device-unlock prompt. The action is harmless —
-    /// just opens the app — and Siri otherwise refuses with
+    /// without the device-unlock prompt. The action is harmless,
+    /// just opens the app, and Siri otherwise refuses with
     /// "die App unterstützt diesen Vorgang mit Siri nicht."
     static let authenticationPolicy: IntentAuthenticationPolicy = .alwaysAllowed
 
@@ -25,7 +25,7 @@ struct OpenSodaliteIntent: AppIntent {
 // MARK: - Continue Watching
 
 /// Resumes the most recent Resume-queue item. Reuses the same
-/// `pendingDeepLinkItemID` channel as the TopShelf cell taps —
+/// `pendingDeepLinkItemID` channel as the TopShelf cell taps,
 /// `AppRouter` already watches that field, fetches the item, and
 /// presents `DetailRouterView` over the tab root.
 ///

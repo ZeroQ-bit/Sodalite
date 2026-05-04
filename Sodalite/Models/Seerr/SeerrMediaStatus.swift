@@ -48,7 +48,7 @@ enum SeerrRequestStatus: Int, Codable, Sendable {
     case completed = 5
 
     // Same lenient pattern as SeerrMediaStatus. The `completed = 5`
-    // value is what tripped us up — Seerr returns it for every request
+    // value is what tripped us up, Seerr returns it for every request
     // attached to an already-available movie/series, so any library
     // item the user owns would fail to decode.
     init(from decoder: Decoder) throws {
@@ -71,7 +71,7 @@ enum SeerrRequestStatus: Int, Codable, Sendable {
 enum SeerrMediaType: String, Codable, Sendable {
     case movie
     case tv
-    // `/search` also returns `person` results — we decode them so the
+    // `/search` also returns `person` results, we decode them so the
     // array parse doesn't fail, then filter them out in the service
     // layer before they reach the UI.
     case person

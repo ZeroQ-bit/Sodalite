@@ -60,7 +60,7 @@ struct CatalogView: View {
             Task { await vm.loadMyRequests(userID: userID) }
         }
         .onChange(of: appState.activeUser?.id) { _, _ in
-            // Profile switch — the Jellyfin user changed, so any
+            // Profile switch, the Jellyfin user changed, so any
             // cached Seerr state (discover sections tied to the old
             // account's permissions, My Requests cached for the
             // previous Seerr user) is stale. Reset the view model so
@@ -76,7 +76,7 @@ struct CatalogView: View {
             // re-auth). .onAppear already ran when the tab first
             // mounted and bailed out of bootstrap because there was
             // no connection yet, so nothing else would kick the load
-            // without this trigger — the user saw an endless spinner
+            // without this trigger, the user saw an endless spinner
             // until they tab-hopped away and back.
             if connected {
                 bootstrap()
@@ -118,7 +118,7 @@ struct CatalogView: View {
             // Quick-jump into the Seerr setup flow so first-time
             // users aren't left staring at an empty state with no
             // obvious path forward. Pushed inside the Catalog's own
-            // NavigationStack — tapping back returns to the tab.
+            // NavigationStack, tapping back returns to the tab.
             NavigationLink {
                 SeerrSettingsView()
                     .toolbar(.hidden, for: .tabBar)

@@ -47,7 +47,7 @@ final class SearchViewModel {
         let trimmed = query.trimmingCharacters(in: .whitespaces)
         guard trimmed.count >= 2 else {
             // Bump the ID so any in-flight task is also disqualified
-            // from writing — even the cleared state belongs to the
+            // from writing, even the cleared state belongs to the
             // newest "search" (which is "no search").
             currentSearchID &+= 1
             jellyfinResults = []
@@ -79,7 +79,7 @@ final class SearchViewModel {
 
         // Only publish if we are still the most recent search. A run
         // that's been superseded must not overwrite the newer query's
-        // results — including not flipping isSearching back to false,
+        // results, including not flipping isSearching back to false,
         // which would tell the UI "done" while a fresher run is still
         // mid-flight.
         guard id == currentSearchID else { return }
@@ -91,7 +91,7 @@ final class SearchViewModel {
         isSearching = false
 
         // Differentiate connection failure from "no results found".
-        // The Jellyfin call is the primary signal — if it errored *and*
+        // The Jellyfin call is the primary signal, if it errored *and*
         // we have nothing to show from either service, the user is
         // looking at a network problem, not an empty library. Seerr
         // alone can't trigger this because users may have it

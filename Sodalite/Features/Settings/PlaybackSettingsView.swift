@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Playback preferences UI. Each row is a single focusable surface:
-/// the Siri Remote's left/right swipe cycles through values directly —
+/// the Siri Remote's left/right swipe cycles through values directly,
 /// no click needed, matching the native tvOS System Settings feel.
 struct PlaybackSettingsView: View {
     @Environment(\.dependencies) private var dependencies
@@ -51,7 +51,7 @@ struct PlaybackSettingsView: View {
                 // in the 8–12 s range; users who only saw the "10 s"
                 // option in the old picker correctly guessed the other
                 // values felt pointless. `autoplayNextEpisode` above is
-                // the real knob — on = 10 s countdown then advance,
+                // the real knob, on = 10 s countdown then advance,
                 // off = overlay stays up until the user picks.
 
                 sectionHeader("settings.playback.section.controls")
@@ -293,7 +293,7 @@ struct PlaybackSettingsView: View {
 // MARK: - Value Picker Row
 
 /// Full-width settings row. The Siri Remote's left/right gesture cycles
-/// through the options directly — no click, no dropdown to open. The
+/// through the options directly, no click, no dropdown to open. The
 /// chevrons are visual cues; they're not independent focus targets.
 /// Select also advances forward, because some users press instead of
 /// swipe. Up/Down moves between rows as usual.
@@ -383,7 +383,7 @@ private struct ValuePickerRow<Value: Hashable>: View {
     private var canMoveBackward: Bool { currentIndex > 0 }
     private var canMoveForward: Bool { currentIndex < options.count - 1 }
 
-    /// Advance the selection. Clamps at the ends — no wrap — because
+    /// Advance the selection. Clamps at the ends, no wrap, because
     /// wrap is disorienting for short lists like "Off / 5s / 10s / 15s".
     private func advance(by step: Int) {
         let newIdx = max(0, min(options.count - 1, currentIndex + step))

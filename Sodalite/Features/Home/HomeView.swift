@@ -93,7 +93,7 @@ struct HomeView: View {
             Task { await viewModel?.loadContent() }
         }
         .onChange(of: appState.activeUser?.id) { _, newValue in
-            // Profile switch — tear down the old HomeViewModel so the
+            // Profile switch, tear down the old HomeViewModel so the
             // next .onAppear rebuilds it with the new userID. Leaving
             // the old one around would keep loading content for the
             // previous profile's permissions + watch state.
@@ -145,7 +145,7 @@ struct HomeView: View {
                         // the precompute fills in the dict and empty
                         // tiles fade out a few seconds later. Once
                         // the user adds matching content the tile
-                        // re-appears on the next session — the
+                        // re-appears on the next session, the
                         // precompute reruns and the count climbs
                         // above zero.
                         let visibleProviders = CatalogProviders.networks.filter { provider in
@@ -198,7 +198,7 @@ struct HomeView: View {
     }
 
     /// Convenience that pulls the right key out of the central
-    /// `FilterCacheKey.Home` namespace — kept here so existing call
+    /// `FilterCacheKey.Home` namespace, kept here so existing call
     /// sites that pass a `CatalogProvider` don't have to reach into
     /// the provider's id field themselves.
     static func providerCacheKey(provider: CatalogProvider, region: String) -> String {
@@ -219,7 +219,7 @@ struct HomeView: View {
                 ),
                 // Without a cacheKey FilteredGridView's init() falls
                 // through to the empty-state branch and shows
-                // isLoading=true on every visit — that's the "lädt
+                // isLoading=true on every visit, that's the "lädt
                 // kurz" the user perceives every time they open a
                 // genre tile. Tag name is the differentiator (Action,
                 // Comedy, Drama, …) so it's a stable enough key.
@@ -241,7 +241,7 @@ struct FilterDestination: Identifiable, Hashable {
     let query: ItemQuery
     /// Optional TMDB watch-provider id used to augment the studio-
     /// name filter with the live "what's actually streaming on this
-    /// service right now" list from Jellyseerr — picks up titles
+    /// service right now" list from Jellyseerr, picks up titles
     /// whose Studios tag in Jellyfin doesn't betray the streamer
     /// (Modern Family on Disney+, Bluey via Ludo Studio, Suits on
     /// Netflix even though the studio is Universal, …). nil → only
@@ -250,11 +250,11 @@ struct FilterDestination: Identifiable, Hashable {
     /// ISO 3166-1 alpha-2 region used with `smartProviderID`. TMDB's
     /// watch-provider data is region-specific (Disney+ in DE has
     /// different titles than Disney+ in US), so we always pin to a
-    /// concrete region — defaulting to the user's `Locale.current`.
+    /// concrete region, defaulting to the user's `Locale.current`.
     var smartProviderRegion: String?
     /// Stable identifier under which FilteredGridView caches its
     /// final result. Set independently of `smartProviderID` so that
-    /// broadcast-only tiles (ABC / NBC / CBS — no watch-provider
+    /// broadcast-only tiles (ABC / NBC / CBS, no watch-provider
     /// concept) still cache their results and feed the empty-tile-
     /// hide pass on the next visit.
     var cacheKey: String?

@@ -15,7 +15,7 @@ struct SeriesDetailView: View {
     @FocusState private var focusedSeasonID: String?
     @FocusState private var focusedEpisodeID: String?
     @FocusState private var focusBridgeActive: Bool
-    /// Drives the initial focus once the loading gate releases —
+    /// Drives the initial focus once the loading gate releases,
     /// the play button only enters the view hierarchy after
     /// isLoading flips false, so the focus engine has nothing to
     /// auto-land on at first paint. We push focus explicitly via
@@ -26,7 +26,7 @@ struct SeriesDetailView: View {
     /// season bar's onChange can tell "user scrolled up from episodes"
     /// apart from "user is tabbing between season tabs". Used to snap
     /// the focus back to the currently playing season when the user
-    /// scrolls back up — without it, tvOS lands on whichever tab is
+    /// scrolls back up, without it, tvOS lands on whichever tab is
     /// geographically above the last focused episode, which may be
     /// two seasons away from what's actually being shown.
     @State private var episodesHadFocus = false
@@ -43,7 +43,7 @@ struct SeriesDetailView: View {
     /// materialises the card if the list was scrolled away), then
     /// writes focusedEpisodeID. Without this round-trip, a write to
     /// focusedEpisodeID for a card outside the rendered window was a
-    /// silent no-op — that's the right-side-takes-two-clicks case.
+    /// silent no-op, that's the right-side-takes-two-clicks case.
     @State private var pendingEpisodeFocus: String?
 
     let item: JellyfinItem
@@ -58,7 +58,7 @@ struct SeriesDetailView: View {
 
     var body: some View {
         ZStack {
-            // Solid black behind the spinner — the backdrop image is
+            // Solid black behind the spinner, the backdrop image is
             // distracting next to the loading indicator (and may
             // still be fading in from network) so we hold it back
             // until the content is ready to crossfade in over it.
@@ -125,7 +125,7 @@ struct SeriesDetailView: View {
                 // single, finished render.
                 ZStack {
                     ProgressView()
-                    // Invisible focus anchor — without it, pressing
+                    // Invisible focus anchor, without it, pressing
                     // Menu on the loading screen propagates past the
                     // navigation stack and quits the app instead of
                     // popping back. Same pattern other empty/loading
@@ -169,7 +169,7 @@ struct SeriesDetailView: View {
                 // same value back was a no-op). dispatch_async
                 // schedules the second write one runloop tick
                 // later, which SwiftUI batches into the same
-                // render cycle as the nil — the user never sees
+                // render cycle as the nil, the user never sees
                 // an intermediate "no focus" or Play-button flash.
                 //
                 // The previous 0.35 s defer DID work, but produced
@@ -354,7 +354,7 @@ struct SeriesDetailView: View {
     /// Resolution order:
     ///   1. Episode the user explicitly tapped (selectedEpisode)
     ///   2. Episode in the loaded list flagged as currentEpisodeID
-    ///   3. The next-up item from getNextUp — populated as soon as
+    ///   3. The next-up item from getNextUp, populated as soon as
     ///      that response lands, so the button has data to render
     ///      before the full season episode list is fetched
     ///   4. First episode of the loaded list (fresh series start)
@@ -401,7 +401,7 @@ struct SeriesDetailView: View {
 
     /// 0…1 fraction representing how far into the resolved target
     /// episode the user is. Returns nil when the episode is fresh or
-    /// has no run-time metadata — the play button suppresses the
+    /// has no run-time metadata, the play button suppresses the
     /// progress overlay in those cases instead of drawing an empty
     /// bar.
     private func playProgressFraction(vm: DetailViewModel) -> Double? {
@@ -425,7 +425,7 @@ struct SeriesDetailView: View {
     }
 
     /// The "Request in Seerr" button only makes sense for series that
-    /// may still grow — a user with the full run of an ended show rarely
+    /// may still grow, a user with the full run of an ended show rarely
     /// wants to request it again. Jellyfin exposes this as the `status`
     /// field ("Continuing" vs "Ended"). Missing status → stay permissive
     /// and show the button rather than hiding a valid use case.
@@ -442,7 +442,7 @@ struct SeriesDetailView: View {
         // season bar entirely (no tab is geographically above it) and
         // lands on the overview textbox one section up. The section
         // modifier tells tvOS "prefer staying inside this region," so
-        // the up-swipe falls onto a season tab instead — our
+        // the up-swipe falls onto a season tab instead, our
         // onMoveCommand redirect then snaps it to the selected one.
         VStack(alignment: .leading, spacing: 20) {
             ScrollViewReader { proxy in
@@ -462,7 +462,7 @@ struct SeriesDetailView: View {
                             .id(season.id)
                         }
                     }
-                    // Focus scale is 1.05 — without vertical slack the
+                    // Focus scale is 1.05, without vertical slack the
                     // halo clips against the scroll-view top/bottom
                     // edges when a tab is focused.
                     .padding(.horizontal, 50)
@@ -476,7 +476,7 @@ struct SeriesDetailView: View {
                     let cameFromOutside = oldID == nil || episodesHadFocus
                     if cameFromOutside, let newID, newID != vm.selectedSeasonID {
                         let target = vm.selectedSeasonID
-                        // Defer to the next runloop tick — setting
+                        // Defer to the next runloop tick, setting
                         // @FocusState synchronously inside its own onChange
                         // gets silently dropped on tvOS. DispatchQueue.main
                         // is the one that's reliably honored here; Task or
@@ -511,8 +511,8 @@ struct SeriesDetailView: View {
 
             // Invisible focus bridge between the season bar and the
             // episode row. Spans the full width (same as the episode
-            // row) so an up-swipe from a far-right episode — where
-            // the actual season tabs don't line up geographically —
+            // row) so an up-swipe from a far-right episode, where
+            // the actual season tabs don't line up geographically,
             // lands here *before* tvOS's picker continues upward into
             // the overview textbox or the tech-info cards. Once
             // focused, the bridge redirects based on which row the
@@ -521,7 +521,7 @@ struct SeriesDetailView: View {
             //
             // Height: 24pt. The geographic focus picker on tvOS picks
             // by *proximity*, but it also weights frame size when
-            // proximity ties — sub-10pt focusables get skipped if
+            // proximity ties, sub-10pt focusables get skipped if
             // there's a much larger one nearby. 1pt missed often,
             // 8pt was better but still flaky on a fast season-tab →
             // down sequence. 24pt is reliably picked up. Color.clear
@@ -535,7 +535,7 @@ struct SeriesDetailView: View {
                     guard active else { return }
                     // FocusState writes still need a defer past the
                     // SwiftUI tick currently committing the bridge's
-                    // own focus, otherwise tvOS swallows them — so
+                    // own focus, otherwise tvOS swallows them, so
                     // the season case (which writes a FocusState)
                     // keeps a small delay. The episode case writes
                     // a plain @State variable (pendingEpisodeFocus)
@@ -560,7 +560,7 @@ struct SeriesDetailView: View {
                             return vm.episodes.first?.id
                         }()
                         if let target {
-                            // Immediate — pendingEpisodeFocus is plain
+                            // Immediate, pendingEpisodeFocus is plain
                             // @State, not FocusState. The receiver in
                             // the episode-row ScrollViewReader scrolls
                             // the target into the LazyHStack viewport,
@@ -572,7 +572,7 @@ struct SeriesDetailView: View {
                         // First time anything inside this section
                         // gets focus (e.g. NavigationStack push).
                         // Send focus to the selected season as a
-                        // sensible default — user can press down to
+                        // sensible default, user can press down to
                         // reach the episodes from there.
                         let target = vm.selectedSeasonID
                         deferFocusWrite { focusedSeasonID = target }
@@ -672,7 +672,7 @@ struct SeriesDetailView: View {
                         // when we write focusedEpisodeID. Without
                         // the scroll, the write silently failed for
                         // a card that had been scrolled out of the
-                        // rendered window — that was the right-side
+                        // rendered window, that was the right-side
                         // 2-press case.
                         withAnimation(.easeInOut(duration: 0.2)) {
                             episodeProxy.scrollTo(target, anchor: .center)
@@ -760,7 +760,7 @@ struct SeasonTabButtonStyle: ButtonStyle {
         // zero delay on fade-out. If any residual wrong-tab-first
         // transition slips past the onMoveCommand prime (first entry
         // into the view, an edge-case direction), the stroke simply
-        // never becomes visible on the wrong tab — the 50 ms window
+        // never becomes visible on the wrong tab, the 50 ms window
         // is enough for the DispatchQueue fallback to land focus on
         // the right tab first. Between-tab navigation still feels
         // instant because 50 ms is sub-perceptual.
@@ -791,7 +791,7 @@ struct EpisodeLandscapeCard: View {
 
     /// Set by the caller based on the surrounding `@FocusState`
     /// (`focusedEpisodeID == episode.id`). Drives the accent-colored
-    /// focus stroke on the thumbnail — `@Environment(\.isFocused)` in
+    /// focus stroke on the thumbnail, `@Environment(\.isFocused)` in
     /// a Button label is unreliable on tvOS, so we pass it explicitly.
     var isFocused: Bool = false
 
@@ -814,7 +814,7 @@ struct EpisodeLandscapeCard: View {
                 .frame(width: 360, height: 202)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
                 .overlay(
-                    // Outer stroke — same pattern as MediaCard. Keeps
+                    // Outer stroke, same pattern as MediaCard. Keeps
                     // the thumbnail itself clean (no inner bite) and
                     // leaves the 4pt progress bar fully visible.
                     RoundedRectangle(cornerRadius: 12 + strokeWidth)
@@ -870,7 +870,7 @@ struct EpisodeLandscapeCard: View {
         }
     }
 
-    /// Focus stroke beats selected and current — when the user is
+    /// Focus stroke beats selected and current, when the user is
     /// interacting with the card, that trumps whatever state it's in.
     /// AnyShapeStyle lets us mix the tint ShapeStyle (focus) with plain
     /// Color values (selected/current) behind the same .strokeBorder.

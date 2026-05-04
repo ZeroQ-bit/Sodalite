@@ -16,14 +16,14 @@ final class HomeViewModel {
     var providerBackdrops: [Int: URL] = [:]
 
     /// Resolved-item count per streaming provider, keyed by
-    /// `provider.id`. Populated by the background precompute pass —
+    /// `provider.id`. Populated by the background precompute pass,
     /// the empty-tile-hide filter on the home view reads from here
     /// to drop providers whose library matches resolve to zero
     /// without waiting for the user to tap each one.
     var providerItemCounts: [Int: Int] = [:]
 
     /// Guards against concurrent / repeated precompute runs within
-    /// the same session — re-resolving every provider on every Home
+    /// the same session, re-resolving every provider on every Home
     /// re-appearance would hammer Seerr for ~100 calls and add
     /// nothing the user can perceive.
     private var providerCountsComputedAt: Date?
@@ -37,7 +37,7 @@ final class HomeViewModel {
     /// Handles for the background side-effects `loadContent` kicks
     /// off. Held so we can cancel them when the view model is torn
     /// down (profile switch, tab destruction) or when `loadContent`
-    /// is re-entered before the previous fan-out finished — without
+    /// is re-entered before the previous fan-out finished, without
     /// that, an orphaned VM keeps fetching against the server and
     /// writing into FilterCache long after the UI it backed is gone.
     private var backdropTask: Task<Void, Never>?
@@ -46,7 +46,7 @@ final class HomeViewModel {
 
     /// Timestamp of the last successful loadContent(). Used by the
     /// view's onAppear to decide whether enough time has passed to
-    /// refresh — otherwise new server-side content (Latest Movies,
+    /// refresh, otherwise new server-side content (Latest Movies,
     /// Latest Series, etc.) never shows up until the app restarts.
     var lastLoadedAt: Date?
 
@@ -93,13 +93,13 @@ final class HomeViewModel {
         }
 
         // Capture row-type predicates on MainActor before crossing
-        // into the task group — HomeRowType is MainActor-isolated
+        // into the task group, HomeRowType is MainActor-isolated
         // under the project's default-isolation rule, so reading
         // .isTagRow from a non-isolated closure would otherwise be
         // rejected.
         let plan: [(type: HomeRowType, isTag: Bool)] = enabledRows.compactMap { config in
             if config.type.isDiscoverProviderRow {
-                // Hardcoded data — nothing to fetch. The HomeView
+                // Hardcoded data, nothing to fetch. The HomeView
                 // renders the row directly from CatalogProviders.
                 return nil
             }
@@ -139,7 +139,7 @@ final class HomeViewModel {
 
         // If we had rows configured *and* every single fan-out came
         // back empty, the most likely cause is the server is
-        // unreachable — `loadRow`/`loadTagRow` both swallow errors and
+        // unreachable, `loadRow`/`loadTagRow` both swallow errors and
         // return nil, so a fan-out full of nils looks identical to a
         // total network failure. Surface the existing retry overlay
         // when that happens. On a *refresh* we keep the previously-
@@ -182,7 +182,7 @@ final class HomeViewModel {
         // Best-effort: fan out one Studios query per provider so
         // the streaming-provider row can render a sample backdrop
         // from the local library. Failures and gaps in metadata
-        // are tolerated — the tile falls back to the logo-only
+        // are tolerated, the tile falls back to the logo-only
         // style for any provider that doesn't resolve.
         backdropTask = Task { [weak self] in
             await self?.loadProviderBackdrops()
@@ -209,7 +209,7 @@ final class HomeViewModel {
     /// also written to FilterCache so a subsequent tap renders the
     /// grid synchronously.
     ///
-    /// Throttled to one run per session — re-running every Home
+    /// Throttled to one run per session, re-running every Home
     /// re-appearance would fire ~110 Seerr calls and add nothing
     /// the user can perceive in that window. Storage state (cache
     /// + counts dict) survives across appearances anyway.
@@ -222,7 +222,7 @@ final class HomeViewModel {
         let disc = discoverService
         let uid = userID
 
-        // Build the TMDB map on MainActor first — JellyfinItem.tmdbID
+        // Build the TMDB map on MainActor first, JellyfinItem.tmdbID
         // and CatalogProviders.networks are both MainActor-isolated
         // under the project's default isolation, so we have to read
         // them here before handing the values to a detached task.
@@ -241,7 +241,7 @@ final class HomeViewModel {
             if let id = item.tmdbID { tmdbMap[id] = item }
         }
         // Snapshot only the fields the resolve pass needs into a
-        // plain Sendable struct — CatalogProvider itself is
+        // plain Sendable struct, CatalogProvider itself is
         // MainActor-isolated under the project default, so we can't
         // hand the struct directly to a detached task.
         let providerInfos: [ProviderResolveInfo] = CatalogProviders.networks.map {
@@ -301,7 +301,7 @@ final class HomeViewModel {
                 filterKey: FilterCacheKey.Home.provider(id: providerID, region: region)
             )
             // Backfill the backdrop only if the fast studio-only
-            // pass didn't already set one — the precompute resolver
+            // pass didn't already set one, the precompute resolver
             // includes watch-provider matches, so it can find a
             // sample for tiles whose Studios tag in the library
             // doesn't match (Paramount+ in particular).
@@ -376,7 +376,7 @@ final class HomeViewModel {
             }
         }.value
 
-        // Hop back to MainActor for the cache writes — FilterCache.shared
+        // Hop back to MainActor for the cache writes, FilterCache.shared
         // is non-isolated but the detached closure can't see that under
         // the project's strict-concurrency settings, so we collect the
         // results first and persist here.
@@ -440,7 +440,7 @@ final class HomeViewModel {
         let providers = CatalogProviders.networks
         // Stage 1: collect a sample item per provider in parallel.
         // imageService isn't Sendable, so URL construction happens
-        // back on MainActor in stage 2 — the task group only carries
+        // back on MainActor in stage 2, the task group only carries
         // the JellyfinItem (which is Sendable) across the boundary.
         let pairs: [(Int, JellyfinItem)] = await withTaskGroup(
             of: (Int, JellyfinItem?).self,
@@ -485,7 +485,7 @@ final class HomeViewModel {
                 items = response.items
 
             case .latestMovies:
-                // Native /Items/Latest for Jellyfin parity — whatever
+                // Native /Items/Latest for Jellyfin parity, whatever
                 // order the Jellyfin web UI shows is what Sodalite
                 // shows. ParentId omitted so users with multiple
                 // movie libraries (Movies + Documentaries + Kids …)
@@ -501,7 +501,7 @@ final class HomeViewModel {
                 )
 
             case .latestShows:
-                // Same treatment as latestMovies — /Items/Latest
+                // Same treatment as latestMovies, /Items/Latest
                 // across every accessible library, typed down to
                 // Series so we don't get movies/music mixed in.
                 items = try await libraryService.getLatestMedia(

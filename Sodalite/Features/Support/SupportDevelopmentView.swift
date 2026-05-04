@@ -2,7 +2,7 @@ import StoreKit
 import SwiftUI
 
 /// Settings screen where users can leave an optional tip or unlock the
-/// Supporter Pack. Nothing in the app is gated behind either purchase —
+/// Supporter Pack. Nothing in the app is gated behind either purchase,
 /// this screen exists purely so users who want to say thanks have a
 /// clean, non-pushy way to do it.
 struct SupportDevelopmentView: View {
@@ -69,7 +69,7 @@ struct SupportDevelopmentView: View {
 
             Text(String(
                 localized: "support.header.copy",
-                defaultValue: "Sodalite is a one-person passion project. Everything in the app is and stays free. Tips and the Supporter Pack are optional — they help cover the Apple Developer fee and show that the work is appreciated."
+                defaultValue: "Sodalite is a one-person passion project. Everything in the app is and stays free. Tips and the Supporter Pack are optional, they help cover the Apple Developer fee and show that the work is appreciated."
             ))
             .font(.body)
             .foregroundStyle(.secondary)
@@ -111,7 +111,7 @@ struct SupportDevelopmentView: View {
                 .fontWeight(.semibold)
                 Text(String(
                     localized: "support.pack.subtitle",
-                    defaultValue: "One-time unlock. Cosmetic extras — a special splash icon, custom accent colors, and a supporter badge in Settings."
+                    defaultValue: "One-time unlock. Cosmetic extras, a special splash icon, custom accent colors, and a supporter badge in Settings."
                 ))
                 .font(.footnote)
                 .foregroundStyle(.secondary)
@@ -221,7 +221,7 @@ struct SupportDevelopmentView: View {
                 localized: "support.unavailable.title",
                 defaultValue: "Products not available"
             )
-            // Sandbox-testing hint is the one users will actually need —
+            // Sandbox-testing hint is the one users will actually need,
             // on tvOS this is almost always the cause when a dev build
             // sees an empty product list.
             detail = String(

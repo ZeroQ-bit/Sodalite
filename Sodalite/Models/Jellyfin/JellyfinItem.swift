@@ -36,9 +36,9 @@ struct JellyfinItem: Codable, Sendable, Identifiable, Equatable, Hashable {
     let chapters: [ChapterInfo]?
 
     /// TMDB identifier if Jellyfin has it (used to correlate with Seerr
-    /// catalog entries — dedup in search, route from detail-view
+    /// catalog entries, dedup in search, route from detail-view
     /// "request" button). Jellyfin stores the keys case-sensitively
-    /// ("Tmdb") but some older scanner versions wrote "tmdb" — check both.
+    /// ("Tmdb") but some older scanner versions wrote "tmdb", check both.
     var tmdbID: Int? {
         guard let ids = providerIds else { return nil }
         let raw = ids["Tmdb"] ?? ids["tmdb"] ?? ids["TMDB"]

@@ -27,7 +27,7 @@ final class DetailViewModel {
     private let playbackService: JellyfinPlaybackServiceProtocol?
     private let imageService: JellyfinImageService
     private let userID: String
-    /// In-flight prefetch task — cancelled on deinit so a disappearing
+    /// In-flight prefetch task, cancelled on deinit so a disappearing
     /// view doesn't keep self alive waiting on network. `nonisolated(unsafe)`
     /// is required because `deinit` on an actor-isolated class runs
     /// nonisolated, and the plain `nonisolated` fix-it the compiler
@@ -76,7 +76,7 @@ final class DetailViewModel {
 
         // Fetch detail. We avoid `async let` here because it
         // interacts badly with @MainActor-isolated service calls crossing
-        // back into a non-isolated @Observable class — the task-local
+        // back into a non-isolated @Observable class, the task-local
         // allocator ends up deallocating a pointer that is no longer the
         // top of its stack and we crash with
         // swift_task_dealloc_specific SIGABRT "freed pointer was not the
@@ -87,7 +87,7 @@ final class DetailViewModel {
 
         // Series content (seasons + next-up + episodes) only depends
         // on the item ID, which we already have from the passed-in
-        // item — start the chain in parallel with the detail fetch
+        // item, start the chain in parallel with the detail fetch
         // so the play button's "Fortsetzen + S1E5 · 12:34" subtitle
         // and progress overlay arrive on the screen at the same
         // moment as the rest of the detail panel.
@@ -99,7 +99,7 @@ final class DetailViewModel {
         } : nil
 
         // Similar items power a row near the bottom of the detail
-        // screen — well below the fold on every reasonable viewport,
+        // screen, well below the fold on every reasonable viewport,
         // so the user wouldn't see it within the first paint anyway.
         // Fire it without awaiting so it doesn't gate isLoading
         // flipping false; the similar-row appears progressively when
@@ -135,7 +135,7 @@ final class DetailViewModel {
         //   - getSeasons:  the season-tabs list
         //   - getNextUp:   the resume target (if any)
         //   - loadEpisodes: needs a season ID, but next-up gives us
-        //                  one as soon as it lands — so we wait
+        //                  one as soon as it lands, so we wait
         //                  ONLY on next-up before kicking that off,
         //                  not on the seasons response.
         let seasonsTask = Task { try? await itemService.getSeasons(seriesID: item.id, userID: userID) }
@@ -163,7 +163,7 @@ final class DetailViewModel {
             }
         }
 
-        // Wait on the seasons response — fast network races aside
+        // Wait on the seasons response, fast network races aside
         // this is the slowest of the three calls because Jellyfin
         // returns full metadata for every season image tag.
         let seasonsResponse = await seasonsTask.value
@@ -241,7 +241,7 @@ final class DetailViewModel {
         do {
             // Chronological: oldest first. Franchise box-sets (Iron
             // Man → Avengers, Harry Potter 1 → 8) read naturally
-            // left-to-right in release order — SortName would give
+            // left-to-right in release order, SortName would give
             // "Avengers" before "Iron Man" and defeat the point of a
             // collection. PremiereDate is the original theatrical /
             // first-air date Jellyfin stamps on each item.
@@ -274,7 +274,7 @@ final class DetailViewModel {
 
     func prefetchPlaybackInfo(for itemID: String) {
         guard let playbackService else { return }
-        // Cancel any older prefetch — only the latest item matters.
+        // Cancel any older prefetch, only the latest item matters.
         prefetchTask?.cancel()
         prefetchTask = Task { [weak self] in
             guard let self else { return }

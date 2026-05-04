@@ -1,14 +1,14 @@
 import Foundation
 
 /// Run `work` on the next main-queue turn, optionally after a small
-/// delay. Use this — not `Task.sleep` — for any `@FocusState` write
+/// delay. Use this, not `Task.sleep`, for any `@FocusState` write
 /// that has to land *after* the SwiftUI tick currently committing
 /// the focus engine, and for the scroll calls that need to chase a
 /// just-written focus target.
 ///
 /// Background: `Task.sleep` resumes on a cooperative thread and the
 /// follow-up MainActor hop occasionally lands inside the same focus
-/// commit it was meant to dodge — particularly on tvOS when the
+/// commit it was meant to dodge, particularly on tvOS when the
 /// remote's button press already drives one focus update. The
 /// `DispatchQueue.main.asyncAfter` path always lands on a fresh
 /// main-queue turn after the deadline, which is exactly the

@@ -40,13 +40,13 @@ final class PlaybackPreferences {
     /// Subtitle-delay choices in seconds. Negative shifts subs *earlier*
     /// (they appear before the audio line they're translating); positive
     /// shifts them *later*. Step density is finer near zero where most
-    /// real-world out-of-sync issues land — wider steps further out for
+    /// real-world out-of-sync issues land, wider steps further out for
     /// the rare badly-muxed track.
     static let subtitleDelayChoices: [Double] = [
         -5, -3, -2, -1.5, -1, -0.5, -0.25, 0, 0.25, 0.5, 1, 1.5, 2, 3, 5
     ]
 
-    /// Shared language options — alphabetical by display name. ISO 639-2/B
+    /// Shared language options, alphabetical by display name. ISO 639-2/B
     /// bibliographic codes (Jellyfin's convention: "deu" not "ger", "cze"
     /// not "ces", etc.).
     private static let baseLanguages: [LanguageChoice] = [
@@ -80,13 +80,13 @@ final class PlaybackPreferences {
         LanguageChoice(code: "vie", short: "VI",  titleKey: "settings.playback.language.vie"),
     ]
 
-    /// Audio pref dropdown — "Auto" first, then the shared alphabetical list.
+    /// Audio pref dropdown, "Auto" first, then the shared alphabetical list.
     static var audioLanguageChoices: [LanguageChoice] {
         [LanguageChoice(code: nil, short: "Auto", titleKey: "settings.playback.language.auto")]
             + baseLanguages
     }
 
-    /// Subtitle pref dropdown — same shape as audio: "Auto" first,
+    /// Subtitle pref dropdown, same shape as audio: "Auto" first,
     /// then the alphabetical list. `nil` code lets the per-track
     /// auto-pick logic (foreign-audio detection, system language)
     /// decide; an explicit language code pins the preference.
@@ -108,7 +108,7 @@ final class PlaybackPreferences {
     /// Subtitle text size relative to the default. Used for both
     /// the engine's text-cue overlay and the legacy SRTParser path.
     /// Calibrated for tvOS viewing distance (3–5 m from a 55–65″ TV)
-    /// — sizes land between ~32 pt (small) and ~68 pt (xlarge),
+    ///, sizes land between ~32 pt (small) and ~68 pt (xlarge),
     /// roughly aligned with Apple TV's own subtitle-size
     /// accessibility range from Default to Extra Extra Large.
     enum SubtitleFontSize: String, CaseIterable, Sendable, Identifiable {
@@ -151,9 +151,9 @@ final class PlaybackPreferences {
 
     /// How the rendered video frame fills the available player area.
     /// `original` preserves the source aspect ratio with letterbox /
-    /// pillarbox bars where needed (the safe default — never hides
+    /// pillarbox bars where needed (the safe default, never hides
     /// content). `fill` zooms in and crops the overflow so the frame
-    /// covers the screen edge to edge — useful for 4:3 episodes on
+    /// covers the screen edge to edge, useful for 4:3 episodes on
     /// a 16:9 TV or 2.39:1 cinemascope content where the user prefers
     /// no letterbox bars. Maps directly to AVLayerVideoGravity in the
     /// engine.
@@ -195,7 +195,7 @@ final class PlaybackPreferences {
 
     /// Auto-enable subtitles when the playing audio track isn't in the
     /// user's preferred audio language. Default ON because that mirrors
-    /// the streaming-app convention (Netflix et al.) — if the user wants
+    /// the streaming-app convention (Netflix et al.), if the user wants
     /// German and the episode only has English, they almost always want
     /// German subs on top. Flip off for users who don't want subs ever.
     var autoSubtitleForForeignAudio: Bool {
@@ -226,7 +226,7 @@ final class PlaybackPreferences {
 
     /// Default picture-fill mode for new playback sessions. The
     /// in-player picture button can override this for the current
-    /// session without persisting — that's a transient state on
+    /// session without persisting, that's a transient state on
     /// PlayerViewModel, not on the prefs.
     var pictureMode: PictureMode {
         didSet { store.set(pictureMode.rawValue, forKey: Keys.pictureMode) }

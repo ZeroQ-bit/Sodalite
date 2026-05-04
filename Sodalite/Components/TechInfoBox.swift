@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Collects per-card heights via PreferenceKey so every TechCard in a
-/// horizontal strip can size itself to the tallest sibling — no clip,
+/// horizontal strip can size itself to the tallest sibling, no clip,
 /// no ragged heights. Reduce picks the max so the preference bubbles
 /// up the tallest intrinsic size from the children.
 private struct TechCardMaxHeightKey: PreferenceKey {
@@ -173,7 +173,7 @@ struct TechCard<Content: View>: View {
     let icon: String
     let title: LocalizedStringKey
     /// Shared height pulled from the parent's PreferenceKey. 0 on the
-    /// first layout pass — the inner `.frame(height: nil)` lets the
+    /// first layout pass, the inner `.frame(height: nil)` lets the
     /// card size to its natural content so the preference can report
     /// back. Second pass uses the measured maximum.
     let height: CGFloat
@@ -193,7 +193,7 @@ struct TechCard<Content: View>: View {
         .frame(width: 380, alignment: .topLeading)
         .background(
             GeometryReader { geo in
-                // Report this card's natural laid-out height upward —
+                // Report this card's natural laid-out height upward,
                 // the parent collects the max and feeds it back via
                 // the `height` parameter so every card renders at the
                 // tallest sibling's size.

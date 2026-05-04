@@ -15,7 +15,7 @@ final class LoginViewModel {
     var quickConnectAuthorized = false
 
     // Auth result stored for finalization after animation.
-    // savedPassword is set only for regular (non-Quick-Connect) logins —
+    // savedPassword is set only for regular (non-Quick-Connect) logins,
     // we cache it in the keychain so Seerr can reuse it without asking
     // the user to retype.
     var authResult: (server: JellyfinServer, user: JellyfinUser, token: String, savedPassword: String?)?
@@ -27,7 +27,7 @@ final class LoginViewModel {
     private let dependencies: DependencyContainer
     /// Whatever `/Users/Public` sent for this user in the picker. Kept
     /// so we can backfill `primaryImageTag` on the post-login user
-    /// object — some Jellyfin versions omit the tag on the auth
+    /// object, some Jellyfin versions omit the tag on the auth
     /// response but include it on /Users/Public, and without this
     /// fallback the avatar would disappear after every fresh login.
     private let preSelectedUser: JellyfinUser?
@@ -45,7 +45,7 @@ final class LoginViewModel {
         self.dependencies = dependencies
         self.preSelectedUser = preSelectedUser
         // Pre-fill the username when the caller already picked a user
-        // from the `/Users/Public` list — avoids re-typing and leaves
+        // from the `/Users/Public` list, avoids re-typing and leaves
         // the password field as the only thing left to touch.
         if let preSelectedUser {
             self.username = preSelectedUser.name

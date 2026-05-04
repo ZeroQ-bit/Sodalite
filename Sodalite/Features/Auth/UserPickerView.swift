@@ -32,7 +32,7 @@ struct UserPickerView: View {
             } else if let errorMessage {
                 errorState(message: errorMessage)
             } else if users.isEmpty {
-                // Server-side list empty — either "show users" is off,
+                // Server-side list empty, either "show users" is off,
                 // or the server is older than 10.x. Same UX as the
                 // manual path.
                 emptyState
@@ -80,7 +80,7 @@ struct UserPickerView: View {
 
     private var userGrid: some View {
         // Fixed-width columns + Spacer sandwich centers the grid
-        // horizontally — .adaptive stretched to full width and pinned
+        // horizontally, .adaptive stretched to full width and pinned
         // a single demo-server user to the left edge.
         //
         // Both the grid and the manual-login button sit in their own
@@ -206,14 +206,14 @@ struct UserPickerView: View {
         isLoading = true
         errorMessage = nil
         // Scope the JellyfinClient to the server we're about to pick
-        // users from — the server discovery step leaves baseURL at
+        // users from, the server discovery step leaves baseURL at
         // whatever was last used, and /Users/Public needs the correct
         // host.
         dependencies.jellyfinClient.baseURL = server.url
         do {
             let fetched = try await dependencies.jellyfinAuthService.getPublicUsers()
             // Hide profiles that are already remembered for this
-            // server — re-adding them would just overwrite the same
+            // server, re-adding them would just overwrite the same
             // entry, which is confusing when the user explicitly
             // came here to *add another* profile. On first-time
             // login the remembered list is empty so this is a

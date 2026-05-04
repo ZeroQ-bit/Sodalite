@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Read-only preview card for a Jellyseerr episode. Used inside the
 /// catalog series detail to show what the user is actually requesting
-/// when they pick a season — Jellyseerr's smallest request unit is a
+/// when they pick a season, Jellyseerr's smallest request unit is a
 /// whole season, so the card itself has no per-episode request action.
 struct SeerrEpisodeCard: View {
     let episode: SeerrEpisode
@@ -31,7 +31,7 @@ struct SeerrEpisodeCard: View {
                     placeholderArt
                 }
 
-                // Episode-number chip — anchored top-leading so it
+                // Episode-number chip, anchored top-leading so it
                 // doesn't overlap the still's centre composition.
                 VStack {
                     HStack {

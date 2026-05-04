@@ -4,21 +4,21 @@ import AetherEngine
 /// Renders the subtitle cues active at the current playback time on top
 /// of the video. Two body kinds:
 ///
-/// - **Text** — a centered, semi-transparent black box with white text.
+/// - **Text**, a centered, semi-transparent black box with white text.
 ///   At most one text cue is active at a time in practice (FFmpeg's
 ///   text decoders merge same-time rects into one cue), but the layout
 ///   tolerates more.
-/// - **Image** — a bitmap with normalised position (PGS / DVB / HDMV).
+/// - **Image**, a bitmap with normalised position (PGS / DVB / HDMV).
 ///   Multiple bitmap cues can overlap (signs/songs at the top while
 ///   dialogue stays at the bottom), so we render every active one.
 struct SubtitleOverlayView: View {
     let cues: [SubtitleCue]
     let currentTime: Double
-    /// User-selected text size — applied as a multiplier on top of the
+    /// User-selected text size, applied as a multiplier on top of the
     /// base `.title3` font. Picked up from PlaybackPreferences.
     let fontSize: PlaybackPreferences.SubtitleFontSize
     /// User-selected foreground colour for text cues. Bitmap cues
-    /// (PGS / DVB) ignore this — the colour is baked into the
+    /// (PGS / DVB) ignore this, the colour is baked into the
     /// graphic by the source.
     let textColor: PlaybackPreferences.SubtitleColor
     /// Background style for text cues (box / outline / none).
@@ -74,7 +74,7 @@ struct SubtitleOverlayView: View {
             .transition(.opacity)
     }
 
-    /// Compose the text view itself — font + colour + the chosen
+    /// Compose the text view itself, font + colour + the chosen
     /// background style (box / outline / none). Outline is drawn by
     /// stacking eight nudged copies in black behind the foreground
     /// text; the system has no per-character stroke modifier on tvOS.
@@ -169,7 +169,7 @@ struct SubtitleOverlayView: View {
         // Apply user's delay offset. delay > 0 means subs should
         // appear LATER than they would by default, so the cue at
         // [10..12] is "perceived" as [11..13] for delay = +1.
-        // Equivalently, look up at (currentTime - delay) — at audio
+        // Equivalently, look up at (currentTime - delay), at audio
         // time 11.0 we want the cue whose intrinsic start was 10.0.
         let lookupTime = currentTime - delaySeconds
         var lo = 0, hi = cues.count

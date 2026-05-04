@@ -5,7 +5,7 @@ import Foundation
 /// re-login every time. One entry per (jellyfinServerID,
 /// jellyfinUserID) pair.
 ///
-/// The session cookie is a Jellyseerr `connect.sid` value — same
+/// The session cookie is a Jellyseerr `connect.sid` value, same
 /// kind of token Login writes into SeerrClient.sessionCookie. A 401
 /// on restore is the signal to drop the entry and let the user
 /// re-authenticate for that specific profile.

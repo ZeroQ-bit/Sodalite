@@ -44,7 +44,7 @@ enum JellyfinEndpoint: APIEndpoint {
     // Search
     case searchHints(userID: String, query: String, limit: Int)
 
-    // Media Segments (Intro / Outro markers — Jellyfin 10.10+ native,
+    // Media Segments (Intro / Outro markers, Jellyfin 10.10+ native,
     // or intro-skipper plugin on older servers)
     case mediaSegments(itemID: String)
 
@@ -160,7 +160,7 @@ enum JellyfinEndpoint: APIEndpoint {
                 items.append(URLQueryItem(name: "ParentId", value: parentID))
             }
             if let includeItemTypes {
-                // Filter /Items/Latest to one specific item type —
+                // Filter /Items/Latest to one specific item type,
                 // without it, dropping ParentId means the row
                 // aggregates movies + series + music in a random
                 // jumble instead of feeding a typed "Latest Movies"
@@ -262,7 +262,7 @@ struct ItemQuery: Sendable {
     var genres: [String]?
     var studioNames: [String]?
     var isFavorite: Bool?
-    /// Single-value provider-id match like "tmdb.123" — used by the
+    /// Single-value provider-id match like "tmdb.123", used by the
     /// home-page smart provider filter to look up library items by
     /// TMDB id one at a time. Jellyfin's `AnyProviderIdEquals`
     /// accepts only a single value, so multi-id lookups have to be
@@ -297,7 +297,7 @@ struct ItemQuery: Sendable {
         items.append(URLQueryItem(name: "Fields", value: fields))
         items.append(URLQueryItem(name: "Recursive", value: "true"))
         // Default is true for Movie queries: Jellyfin folds BoxSet
-        // members into a single representative row — even when the
+        // members into a single representative row, even when the
         // collection isn't visible in the UI (it may have been created
         // silently from TMDB metadata). Always send false so each movie
         // appears on its own. Our "Collections" row uses a dedicated

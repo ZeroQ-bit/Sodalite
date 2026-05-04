@@ -37,7 +37,7 @@ struct CatalogMyRequestsView: View {
         }
     }
 
-    /// Tap on a request row navigates back to its catalog detail view —
+    /// Tap on a request row navigates back to its catalog detail view,
     /// the same surface the user originally requested from. Builds a
     /// minimal SeerrMedia stub from the request (CatalogDetailView
     /// re-fetches the full record on appear). Skips when there's no
@@ -95,7 +95,7 @@ private struct SeerrRequestRow: View {
     let onSelect: () -> Void
 
     var body: some View {
-        // FocusableCard so tvOS' focus engine can land here — without
+        // FocusableCard so tvOS' focus engine can land here, without
         // a focusable child the surrounding ScrollView refuses to
         // scroll on the remote. Tap navigates back to the catalog
         // detail view for the same media.
@@ -130,7 +130,7 @@ private struct SeerrRequestRow: View {
                             .monospacedDigit()
                     }
 
-                    // Single effective badge — collapses request.status
+                    // Single effective badge, collapses request.status
                     // and media.status into one readable case (incl.
                     // "Removed" for completed requests whose media was
                     // later deleted from the server).

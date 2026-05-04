@@ -77,13 +77,13 @@ struct SeerrRequestStatusBadge: View {
     }
 }
 
-/// Single, "effective" status badge for a Seerr request — collapses
+/// Single, "effective" status badge for a Seerr request, collapses
 /// `request.status` × `request.media?.status` into one readable case.
 /// Earlier we rendered both badges side by side, which produced
 /// confusing pairs like "Completed · Downloading" and never surfaced
 /// the case where a previously-completed item was later deleted from
 /// the server (the request stayed at completed but media flipped to
-/// unknown / nil — looked like an in-flight download forever).
+/// unknown / nil, looked like an in-flight download forever).
 struct SeerrEffectiveRequestBadge: View {
     let request: SeerrRequest
 
@@ -118,7 +118,7 @@ struct SeerrEffectiveRequestBadge: View {
             // `completed` is Seerr's "Sonarr/Radarr signed off"
             // flag. Anything other than available / partially-
             // available means the file was on the server and has
-            // since been removed — show .removed regardless of
+            // since been removed, show .removed regardless of
             // whatever stale processing flag Seerr is carrying.
             // This is the only state where we can detect a removal
             // from the API alone with confidence.
@@ -131,7 +131,7 @@ struct SeerrEffectiveRequestBadge: View {
             // For an in-flight request we trust Seerr's status as-
             // is. We tried inferring "cancelled mid-download" from
             // an empty Sonarr download queue, but that signal is
-            // shared with several legitimate states — a TV show
+            // shared with several legitimate states, a TV show
             // monitored for episodes that haven't aired yet, a
             // movie waiting for a release date, anything Sonarr is
             // searching for but hasn't started downloading. We

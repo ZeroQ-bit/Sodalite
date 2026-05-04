@@ -1,7 +1,7 @@
 import Foundation
 import AetherEngine
 
-// `SubtitleCue` is now defined in AetherEngine — the engine's own
+// `SubtitleCue` is now defined in AetherEngine, the engine's own
 // in-process subtitle decoder produces it during embedded-stream
 // playback. The HTTP/sidecar fallback below feeds the same type
 // so both paths land on the same overlay renderer.

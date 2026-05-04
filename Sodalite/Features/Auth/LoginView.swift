@@ -74,7 +74,7 @@ struct LoginView: View {
         }
     }
 
-    // Avatar for the pre-selected user — identical composition to the
+    // Avatar for the pre-selected user, identical composition to the
     // UserPicker card so the transition feels like "same user, now
     // enter password" instead of "different screen."
     @ViewBuilder
@@ -132,7 +132,7 @@ struct LoginView: View {
     private func loginFormSection(vm: LoginViewModel) -> some View {
         VStack(spacing: 20) {
             // Hide the username field when the user was picked from
-            // the preceding user-grid — their name is already in the
+            // the preceding user-grid, their name is already in the
             // view model and shown above the password field.
             if preSelectedUser == nil {
                 TextField(String(localized: "auth.login.username"), text: Bindable(vm).username)
@@ -253,7 +253,7 @@ struct LoginView: View {
             // signed-in user. switchToUser on an existing remembered
             // profile already does this, but the "Add another
             // profile" + first-time login paths fell through with
-            // whatever Seerr state the previous Jellyfin user had —
+            // whatever Seerr state the previous Jellyfin user had,
             // until the user manually swapped profiles back and
             // forth, the new account showed the previous account's
             // Seerr UI. Restoring (or clearing) here keeps the new
@@ -265,8 +265,8 @@ struct LoginView: View {
 
             // Tell anyone who pushed this view that we're done.
             // Initial-login flows (ServerDiscoveryView → …) don't
-            // need this — AppRouter swaps its root when
-            // isAuthenticated flips — but the "Add another profile"
+            // need this, AppRouter swaps its root when
+            // isAuthenticated flips, but the "Add another profile"
             // branch from ProfileSettingsView stays mounted on top
             // of TabRootView until the push is popped.
             NotificationCenter.default.post(name: .loginDidComplete, object: nil)

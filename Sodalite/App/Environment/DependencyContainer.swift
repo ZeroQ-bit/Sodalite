@@ -36,7 +36,7 @@ final class DependencyContainer {
     ) {
         // First-launch hook: copy credentials over from the old
         // JellySeeTV install (if any) so existing testers aren't
-        // sent back to the login screen post-rename. Idempotent —
+        // sent back to the login screen post-rename. Idempotent,
         // see KeychainMigrator. Has to run BEFORE keychainService
         // is touched.
         KeychainMigrator.migrateIfNeeded()
@@ -76,7 +76,7 @@ final class DependencyContainer {
 
     /// `try?` is intentional here: a missing or unreadable Keychain entry
     /// (fresh install, wiped storage, corrupted item) means there's no session
-    /// to restore — the app falls back to the login screen. There's no recovery
+    /// to restore, the app falls back to the login screen. There's no recovery
     /// path that would benefit from inspecting the underlying error.
     func restoreSession() -> Bool {
         guard let serverData = try? keychainService.loadData(for: "activeServer"),
@@ -158,7 +158,7 @@ final class DependencyContainer {
         return users.sorted { $0.addedAt > $1.addedAt }
     }
 
-    /// Upsert — replaces any existing entry with the same user ID so
+    /// Upsert, replaces any existing entry with the same user ID so
     /// re-logins refresh the token and avatar tag instead of
     /// stacking duplicates.
     func rememberUser(_ user: RememberedUser) throws {
@@ -174,7 +174,7 @@ final class DependencyContainer {
 
     /// Drop one profile from the remembered list. Called from the
     /// profile-picker's long-press menu. Leaves the active session
-    /// alone — the caller decides whether to switch afterwards.
+    /// alone, the caller decides whether to switch afterwards.
     func forgetUser(id: String, serverID: String) throws {
         let remaining = listRememberedUsers(serverID: serverID)
             .filter { $0.id != id }
@@ -256,7 +256,7 @@ final class DependencyContainer {
             try keychainService.delete(for: KeychainKeys.accessToken(serverID: decoded.id))
             try keychainService.delete(for: KeychainKeys.jellyfinPassword(serverID: decoded.id))
             // Before we forget the remembered profile list, tear
-            // down every profile's per-user Seerr session — otherwise
+            // down every profile's per-user Seerr session, otherwise
             // they linger in the keychain as orphaned blobs.
             for remembered in listRememberedUsers(serverID: decoded.id) {
                 forgetRememberedSeerr(
@@ -311,7 +311,7 @@ final class DependencyContainer {
 
         // Additionally persist a per-(Jellyfin-user) copy so profile
         // switching can restore the right Seerr session for each
-        // profile. Skipped when either ID is missing — callers pass
+        // profile. Skipped when either ID is missing, callers pass
         // both when they can (SeerrSettingsView has the full app
         // state), nothing when the login happens outside of any
         // Jellyfin-user context.
@@ -357,7 +357,7 @@ final class DependencyContainer {
         return remembered.seerrServer
     }
 
-    /// Per-profile Seerr forget — used when a stored Seerr session
+    /// Per-profile Seerr forget, used when a stored Seerr session
     /// fails to restore (server rotated, cookie expired, user
     /// revoked). Leaves other profiles' sessions alone.
     func forgetRememberedSeerr(forJellyfinUserID jellyfinUserID: String, jellyfinServerID: String) {

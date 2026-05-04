@@ -2,7 +2,7 @@ import SwiftUI
 import UIKit
 
 /// SwiftUI wrapper around UIKit's UITextField. On tvOS, UITextField is
-/// a first-class citizen of the UIKit focus engine — up/down routing
+/// a first-class citizen of the UIKit focus engine, up/down routing
 /// between the tab bar, the search bar, and the result rows is handled
 /// cleanly, and activating the field reliably triggers the system
 /// keyboard overlay. SwiftUI's own TextField on tvOS has subtle focus

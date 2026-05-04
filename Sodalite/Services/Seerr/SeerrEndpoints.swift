@@ -110,7 +110,7 @@ enum SeerrEndpoint: APIEndpoint {
                 URLQueryItem(name: "filter", value: "all"),
                 URLQueryItem(name: "sort", value: "added"),
                 // Jellyseerr's requestedBy filter compares against an
-                // integer user ID directly — "me" was a bad guess that
+                // integer user ID directly, "me" was a bad guess that
                 // silently matched zero requests on every call.
                 URLQueryItem(name: "requestedBy", value: String(userID)),
             ]

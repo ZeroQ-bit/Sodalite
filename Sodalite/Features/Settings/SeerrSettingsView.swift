@@ -54,7 +54,7 @@ struct SeerrSettingsView: View {
         }
         .animation(.easeInOut(duration: 0.3), value: showSuccess)
         .toolbar(.hidden, for: .tabBar)
-        // Inline header only — the floating tvOS nav-title sits behind
+        // Inline header only, the floating tvOS nav-title sits behind
         // the scrolling content and looks like a ghost when the user
         // scrolls past it. Matches PlaybackSettingsView.
         .toolbar(.hidden, for: .navigationBar)
@@ -102,7 +102,7 @@ struct SeerrSettingsView: View {
                 }
                 // foregroundStyle alone doesn't reliably override the
                 // tvOS bordered style's tint propagation into the
-                // icon channel — only a custom buttonStyle that
+                // icon channel, only a custom buttonStyle that
                 // replaces the system rendering is robust.
                 .buttonStyle(SettingsTileButtonStyle())
             }
@@ -462,7 +462,7 @@ struct SeerrSettingsView: View {
             appState.setSeerrConnected(server: server, user: user)
             showSuccess = false
         } catch {
-            // Drop the session cookie only — keep the discovered baseURL so
+            // Drop the session cookie only, keep the discovered baseURL so
             // the user can retry without re-entering the server address.
             // Full clearSeerrSession() would wipe baseURL and the next
             // attempt would fail with "invalid URL" before even reaching

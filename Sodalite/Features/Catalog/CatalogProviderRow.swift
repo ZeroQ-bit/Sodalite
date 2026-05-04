@@ -7,13 +7,13 @@ import SwiftUI
 struct CatalogProviderRow: View {
     let titleKey: LocalizedStringKey
     let providers: [CatalogProvider]
-    /// The destination is decided by the caller — Catalog wraps the
+    /// The destination is decided by the caller, Catalog wraps the
     /// provider in a Jellyseerr-backed `CatalogFilter`, Home translates
     /// it into a Jellyfin Studios filter against the local library.
     let onSelect: (CatalogProvider) -> Void
     /// Optional resolver for a sample backdrop per provider. The
     /// caller decides whether the sample comes from the local
-    /// Jellyfin library (home) or Jellyseerr discover (catalog) — the
+    /// Jellyfin library (home) or Jellyseerr discover (catalog), the
     /// row just renders whatever URL it gets, with a graceful fallback
     /// to the dark logo-only tile when the lookup returns nil.
     var backdropFor: (CatalogProvider) -> URL? = { _ in nil }
@@ -55,7 +55,7 @@ private struct ProviderTile: View {
     private let height: CGFloat = 180
 
     var body: some View {
-        // Same reason as GenreTile / SeerrMediaCard / etc. — Button
+        // Same reason as GenreTile / SeerrMediaCard / etc., Button
         // on tvOS layers a system white halo we can't disable, so we
         // route through FocusableCard for a consistent tint outline.
         FocusableCard(action: action) { isFocused in

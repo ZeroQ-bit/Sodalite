@@ -86,7 +86,7 @@ struct CatalogDiscoverView: View {
                                 onSelect: onSelectFilter
                             )
                         }
-                        // Networks row — drop tiles whose cached
+                        // Networks row, drop tiles whose cached
                         // first page is empty so the user isn't
                         // teased with a card that opens to nothing.
                         let region = Locale.current.region?.identifier ?? "US"

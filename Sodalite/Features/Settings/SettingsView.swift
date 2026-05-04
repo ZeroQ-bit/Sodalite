@@ -51,7 +51,7 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity)
     }
 
-    /// User avatar — loads from the Jellyfin server when a
+    /// User avatar, loads from the Jellyfin server when a
     /// `primaryImageTag` is set, falls back to initials otherwise.
     /// Same treatment as the UserPicker card so the user recognises
     /// themselves consistently across the app.
@@ -99,7 +99,7 @@ struct SettingsView: View {
         //   1. Identity       (Profile)
         //   2. Content layout (Home)
         //   3. Media behavior (Playback)
-        //   4. Personalisation (Appearance — supporter-gated, lives
+        //   4. Personalisation (Appearance, supporter-gated, lives
         //                       deeper than the always-free tiles)
         //   5. Integrations   (Seerr)
         //   6. Meta / give-back (Support)
@@ -197,7 +197,7 @@ struct SettingsView: View {
 
     // MARK: - About
 
-    /// Brand footer at the very bottom of Settings — the conventional
+    /// Brand footer at the very bottom of Settings, the conventional
     /// place for app version and credit. Lives below the logout button
     /// so users see it after they've already navigated past the
     /// actionable content.
@@ -212,7 +212,7 @@ struct SettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.tertiary)
                 .monospacedDigit()
-            // TMDB attribution — required by their API terms whenever
+            // TMDB attribution, required by their API terms whenever
             // their data or imagery is displayed in a downstream app.
             // Catalog posters, backdrops and metadata in Sodalite
             // come from TMDB (directly for images, via Jellyseerr for
@@ -243,7 +243,7 @@ struct SettingsView: View {
     // MARK: - Logout
 
     private var logoutButton: some View {
-        // No destructive role — on tvOS that renders as dark red text
+        // No destructive role, on tvOS that renders as dark red text
         // that's hard to read against the dark background. A subtle
         // arrow-out icon + neutral text is clear enough; the
         // consequence isn't catastrophic. SettingsTileButtonStyle
@@ -311,7 +311,7 @@ struct SettingsTileButtonStyle: ButtonStyle {
     @Environment(\.isFocused) private var isFocused
     /// Reads the `.disabled(...)` modifier upstream. The default tvOS
     /// bordered style auto-dims when disabled, but a custom ButtonStyle
-    /// has to do that work itself — without this read, a disabled
+    /// has to do that work itself, without this read, a disabled
     /// Request / Restore / Logout tile looks identical to an enabled
     /// one.
     @Environment(\.isEnabled) private var isEnabled
@@ -337,7 +337,7 @@ struct SettingsTileButtonStyle: ButtonStyle {
 /// Plain pass-through style: renders the label exactly as written
 /// and adds nothing on focus. Used by avatar / profile cards that
 /// already draw their own focus ring (tinted Circle stroke around
-/// the avatar) — the system-default `.plain` style still overlays a
+/// the avatar), the system-default `.plain` style still overlays a
 /// thick white halo on tvOS, which fights our custom ring. Defining
 /// any custom ButtonStyle is enough to suppress that halo; the body
 /// here is intentionally minimal.
@@ -349,7 +349,7 @@ struct BareButtonStyle: ButtonStyle {
     }
 }
 
-/// Focus treatment only — accent-tint stroke, scale, shadow — without
+/// Focus treatment only, accent-tint stroke, scale, shadow, without
 /// the default background fill. For buttons that already paint their
 /// own backdrop (e.g. SeerrSettings' Jellyfin-credentials toggle, with
 /// an internal "On / Off" badge and a translucent tile) but still

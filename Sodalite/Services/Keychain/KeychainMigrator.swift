@@ -11,7 +11,7 @@ import Security
 /// The bridge works because `Sodalite.entitlements` claims the old
 /// keychain access groups (`…JellySeeTV` + `…JellySeeTV.shared`) and
 /// app group (`group.de.superuser404.JellySeeTV`) as read-only
-/// migration paths — see Phase D.1 of the rename plan. As long as
+/// migration paths, see Phase D.1 of the rename plan. As long as
 /// the old JellySeeTV.app is still installed when Sodalite first
 /// launches, every secret it ever wrote is reachable here.
 ///
@@ -48,7 +48,7 @@ enum KeychainMigrator {
         let sharedCopied = copyAllItems(fromService: oldSharedService, toService: newSharedService)
         migrateAppGroupDeviceID()
 
-        // Mark migration done even if no items were found — a fresh
+        // Mark migration done even if no items were found, a fresh
         // install has nothing to copy and shouldn't keep probing on
         // every cold launch.
         defaults.set(true, forKey: migratedFlagKey)
@@ -57,7 +57,7 @@ enum KeychainMigrator {
 
     /// Enumerates every generic password under `fromService` and
     /// writes a copy under `toService`. Existing items at the new
-    /// service are left alone — Sodalite's own writes always win
+    /// service are left alone, Sodalite's own writes always win
     /// over a stale migration if the user did anything mid-flight.
     @discardableResult
     private static func copyAllItems(fromService: String, toService: String) -> Int {
@@ -83,7 +83,7 @@ enum KeychainMigrator {
                   let data = item[kSecValueData as String] as? Data
             else { continue }
 
-            // Don't overwrite — only fill in what's missing. Lets the
+            // Don't overwrite, only fill in what's missing. Lets the
             // migrator be re-run later (debug rerun, flag reset)
             // without clobbering a more recent Sodalite write.
             if itemExists(account: account, service: toService) { continue }
@@ -119,7 +119,7 @@ enum KeychainMigrator {
     /// group so Jellyfin's session list keeps the same row instead
     /// of a new "Sodalite Top Shelf" entry appearing alongside the
     /// old one. Same for the main app's device id, which the OLD
-    /// JellySeeTV stamped into its own UserDefaults.standard — that
+    /// JellySeeTV stamped into its own UserDefaults.standard, that
     /// store is sandboxed per app and unreachable from here, so the
     /// only path is via the App Group if the OLD app mirrored it
     /// there. Sodalite's farewell build can do that mirror; if it
