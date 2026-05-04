@@ -23,15 +23,15 @@ In scope:
 
 Out of scope:
 
-- Vulnerabilities in **Jellyfin** itself — report to the [Jellyfin project](https://github.com/jellyfin/jellyfin/security)
-- Vulnerabilities in **Seerr** / Jellyseerr — report to that project
-- Issues in **FFmpeg** or upstream codec libraries — report to those projects
+- Vulnerabilities in **Jellyfin** itself: report to the [Jellyfin project](https://github.com/jellyfin/jellyfin/security)
+- Vulnerabilities in **Seerr** / Jellyseerr: report to that project
+- Issues in **FFmpeg** or upstream codec libraries: report to those projects
 - Configuration mistakes on your own server (e.g. exposing Jellyfin without TLS)
 
 ## What you can expect
 
 - Acknowledgement within 72 hours
-- Disclosure timeline coordinated with you — typically 30 days from fix release before public details
+- Disclosure timeline coordinated with you, typically 30 days from fix release before public details
 - Credit in the release notes if you'd like (or anonymous if you prefer)
 
 ## What I can't promise
