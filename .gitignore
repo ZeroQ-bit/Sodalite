@@ -2,7 +2,10 @@ Pods/
 Vendor/FFmpeg/build/
 build/
 
-# Marketing materials, screenshot drafts, logo source files —
+# Marketing materials, screenshot drafts, logo source files,
 # kept locally only, not published to the public repo.
 Marketing/
 Screenshots/
+
+# Local Claude Code working state, never publish.
+.claude/
