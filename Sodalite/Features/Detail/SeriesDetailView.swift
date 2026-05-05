@@ -12,6 +12,16 @@ struct SeriesDetailView: View {
     @State private var showPlayer = false
     @State private var playItem: JellyfinItem?
     @State private var playFromBeginning = false
+    /// True when the player was launched from the prominent Play
+    /// button in the glass panel; false when it was launched from
+    /// an episode card in the episode row. Used by the player-dismiss
+    /// handler to restore focus to the actual control the user
+    /// interacted with, without it, the user always landed back on the
+    /// episode-card row even after pressing the Play button, which
+    /// looked correct (Play button still showed a residual highlight)
+    /// but pressing Down jumped past the seasons row straight to the
+    /// cast row below the episodes.
+    @State private var playOriginatedFromPlayButton = false
     @FocusState private var focusedSeasonID: String?
     @FocusState private var focusedEpisodeID: String?
     @FocusState private var focusBridgeActive: Bool
@@ -160,31 +170,37 @@ struct SeriesDetailView: View {
         }
         .onChange(of: showPlayer) { _, isPlaying in
             if !isPlaying {
-                // Restore focus to the just-played episode.
+                // Restore focus to the control the user actually
+                // interacted with: the Play button if they tapped
+                // that, the episode card if they tapped a card.
+                // Always restoring to the episode card was the
+                // previous behaviour, which looked wrong after a
+                // Play-button launch, the Play button still showed a
+                // residual focus glow, but pressing Down jumped past
+                // the seasons row straight to cast because logical
+                // focus was actually on the episode card below.
                 //
-                // Two-step write with no inter-step delay: the
-                // intermediate nil forces a real state transition
-                // (focusedEpisodeID often still held ep.id from
-                // the tap that opened the player, so writing the
-                // same value back was a no-op). dispatch_async
-                // schedules the second write one runloop tick
-                // later, which SwiftUI batches into the same
-                // render cycle as the nil, the user never sees
-                // an intermediate "no focus" or Play-button flash.
-                //
-                // The previous 0.35 s defer DID work, but produced
-                // the visible jump-to-Play-then-down-to-episode the
-                // user reported. Going as fast as possible avoids
-                // it; if tvOS's modal-dismiss restoration ever
-                // clobbers us in practice, we'll add a tiny
-                // belt-and-suspenders second write.
-                if let ep = playItem {
+                // Two-step write (nil, then the target) forces a real
+                // state transition; without it, writing the same
+                // FocusState value back is a no-op, and the focus
+                // engine doesn't refresh. DispatchQueue.main.async
+                // gets the second write into the next runloop tick so
+                // SwiftUI batches it into the same render cycle as
+                // the nil, the user never sees an intermediate "no
+                // focus" or Play-button flash.
+                if playOriginatedFromPlayButton {
+                    playButtonFocused = false
+                    DispatchQueue.main.async {
+                        playButtonFocused = true
+                    }
+                } else if let ep = playItem {
                     focusedEpisodeID = nil
                     DispatchQueue.main.async {
                         focusedEpisodeID = ep.id
                     }
                 }
                 playItem = nil
+                playOriginatedFromPlayButton = false
             }
         }
         .navigationDestination(item: $navigateToItem) { item in
@@ -300,6 +316,7 @@ struct SeriesDetailView: View {
                         if let ep {
                             playItem = ep
                             playFromBeginning = false
+                            playOriginatedFromPlayButton = true
                             showPlayer = true
                         }
                     }
@@ -587,6 +604,7 @@ struct SeriesDetailView: View {
                                 Button {
                                     playItem = episode
                                     playFromBeginning = false
+                                    playOriginatedFromPlayButton = false
                                     showPlayer = true
                                 } label: {
                                     EpisodeLandscapeCard(
@@ -627,6 +645,7 @@ struct SeriesDetailView: View {
                                     Button {
                                         playItem = episode
                                         playFromBeginning = true
+                                        playOriginatedFromPlayButton = false
                                         showPlayer = true
                                     } label: {
                                         Label("detail.play", systemImage: "play.fill")
@@ -636,6 +655,7 @@ struct SeriesDetailView: View {
                                         Button {
                                             playItem = episode
                                             playFromBeginning = false
+                                            playOriginatedFromPlayButton = false
                                             showPlayer = true
                                         } label: {
                                             Label("detail.resume", systemImage: "play.circle")
