@@ -835,6 +835,15 @@ private struct PlayerOverlayView: View {
             // both are visible.
             topRightInfoColumn
 
+            // Diagnostic log overlay (top-left). Only visible in
+            // DEBUG and TestFlight builds, hidden in App Store
+            // builds. Lets a beta tester screenshot what the engine
+            // logged during playback when they have no Mac to pair
+            // with Console.app.
+            if LogTap.isDiagnosticBuild {
+                DiagnosticLogOverlay()
+            }
+
             // Floating Skip Intro hint, only while the full controls
             // are hidden. When they open, the skip action becomes a
             // proper focusable button inside TransportBar instead.
@@ -1140,5 +1149,47 @@ private struct VideoFormatBadge: View {
         case .dolbyVision:  return "Dolby Vision"
         case .hlg:          return "HLG"
         }
+    }
+}
+
+// MARK: - Diagnostic Log Overlay
+
+/// Top-left diagnostic HUD that mirrors the engine's recent
+/// `print(...)` lines into the player UI. Only mounted in DEBUG /
+/// TestFlight builds (gated by `LogTap.isDiagnosticBuild`). Lets a
+/// beta tester screenshot what the engine reported (DV detection,
+/// HDR10+ extraction, format upgrades, etc.) without pairing the
+/// Apple TV to a Mac for Console.app.
+private struct DiagnosticLogOverlay: View {
+    @ObservedObject private var tap = LogTap.shared
+
+    private let visibleCount = 14
+
+    var body: some View {
+        VStack {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    let visible = Array(tap.lines.suffix(visibleCount))
+                    ForEach(Array(visible.enumerated()), id: \.offset) { _, line in
+                        Text(line)
+                            .font(.system(size: 16, weight: .regular, design: .monospaced))
+                            .foregroundStyle(.white.opacity(0.95))
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(.black.opacity(0.55))
+                )
+                .padding(.leading, 60)
+                .padding(.top, 60)
+                Spacer()
+            }
+            Spacer()
+        }
+        .allowsHitTesting(false)
     }
 }
