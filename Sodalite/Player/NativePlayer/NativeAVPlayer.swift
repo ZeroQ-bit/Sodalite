@@ -52,7 +52,11 @@ final class NativeAVPlayer: ObservableObject {
 
     init() {
         let player = AVPlayer()
-        player.automaticallyWaitsToMinimizeStalling = false
+        // Default (true) is right for VOD HLS, AVPlayer waits for
+        // buffer. HLSAudioEngine sets `false` for live-audio latency
+        // reasons, don't copy that pattern here: AVPlayer would try
+        // to play the moment seg0 has any bytes and stall because
+        // the lazy remuxer needs seconds to produce a full fragment.
         self.avPlayer = player
         self.playerLayer = AVPlayerLayer(player: player)
         self.playerLayer.videoGravity = .resizeAspect
