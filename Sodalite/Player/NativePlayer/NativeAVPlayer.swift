@@ -47,6 +47,9 @@ final class NativeAVPlayer: ObservableObject {
     private var timeObserver: Any?
     private var statusObservation: NSKeyValueObservation?
     private var rateObservation: NSKeyValueObservation?
+    private var timeControlObservation: NSKeyValueObservation?
+    private var notificationObservers: [NSObjectProtocol] = []
+    private var accessLogCount = 0
 
     // MARK: - Init
 
@@ -79,9 +82,12 @@ final class NativeAVPlayer: ObservableObject {
     func load(url: URL, startPosition: Double?) {
         unloadCurrentItem()
 
+        LogTap.shared.note("[NativeAVPlayer] load url=\(url.absoluteString) startPos=\(startPosition.map { String(format: "%.2fs", $0) } ?? "nil")")
+
         let asset = AVURLAsset(url: url)
         let item = AVPlayerItem(asset: asset)
         playerItem = item
+        accessLogCount = 0
         failureMessage = nil
         isReady = false
 
@@ -90,6 +96,16 @@ final class NativeAVPlayer: ObservableObject {
         // observed value, in this case AVPlayerItem hops to its own
         // queue, so we round-trip back to MainActor explicitly.
         statusObservation = item.observe(\.status, options: [.new]) { [weak self] item, _ in
+            let statusStr: String
+            switch item.status {
+            case .unknown:     statusStr = "unknown"
+            case .readyToPlay: statusStr = "readyToPlay"
+            case .failed:      statusStr = "failed"
+            @unknown default:  statusStr = "@unknown"
+            }
+            let nsErr = item.error as NSError?
+            let errSuffix = nsErr.map { " err=\($0.domain)/\($0.code) '\($0.localizedDescription)'" } ?? ""
+            LogTap.shared.note("[NativeAVPlayer] item.status=\(statusStr)\(errSuffix)")
             Task { @MainActor in
                 guard let self = self else { return }
                 switch item.status {
@@ -105,10 +121,81 @@ final class NativeAVPlayer: ObservableObject {
         }
 
         rateObservation = avPlayer.observe(\.rate, options: [.new]) { [weak self] player, _ in
+            let rate = player.rate
+            LogTap.shared.note("[NativeAVPlayer] rate=\(rate)")
             Task { @MainActor in
-                self?.rate = player.rate
+                self?.rate = rate
             }
         }
+
+        // timeControlStatus + reasonForWaitingToPlay together explain
+        // whether AVPlayer is paused, waiting on buffer, or actively
+        // playing. Critical for diagnosing "spinner forever" symptoms
+        // because reasonForWaitingToPlay surfaces the exact stall cause
+        // (.evaluatingBufferingRate / .toMinimizeStalls / etc.).
+        timeControlObservation = avPlayer.observe(\.timeControlStatus, options: [.new]) { player, _ in
+            let statusStr: String
+            switch player.timeControlStatus {
+            case .paused:                          statusStr = "paused"
+            case .waitingToPlayAtSpecifiedRate:    statusStr = "waitingToPlay"
+            case .playing:                         statusStr = "playing"
+            @unknown default:                      statusStr = "@unknown"
+            }
+            let reason = player.reasonForWaitingToPlay?.rawValue ?? "-"
+            LogTap.shared.note("[NativeAVPlayer] timeControlStatus=\(statusStr) reason=\(reason)")
+        }
+
+        // Error log: AVPlayer surfaces transient HLS-level errors
+        // (404 on a segment, parse failure on a manifest, ATS rejection,
+        // codec mismatch) without flipping the item to .failed. These
+        // are the gold mine for "AVPlayer just sits there" diagnostics.
+        let errLogObs = NotificationCenter.default.addObserver(
+            forName: AVPlayerItem.newErrorLogEntryNotification,
+            object: item,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self, let event = self.playerItem?.errorLog()?.events.last else { return }
+            let comment = event.errorComment ?? "no comment"
+            LogTap.shared.note("[NativeAVPlayer] errorLog code=\(event.errorStatusCode) domain=\(event.errorDomain) uri=\(event.uri ?? "-") '\(comment)'")
+        }
+        notificationObservers.append(errLogObs)
+
+        // Access log: log only the first few entries so we know
+        // whether AVPlayer ever reached the segment-fetch stage.
+        // AVPlayer can pump hundreds of these for a long stream so
+        // capping at 5 keeps the overlay readable.
+        let accessLogObs = NotificationCenter.default.addObserver(
+            forName: AVPlayerItem.newAccessLogEntryNotification,
+            object: item,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self = self,
+                  self.accessLogCount < 5,
+                  let event = self.playerItem?.accessLog()?.events.last else { return }
+            self.accessLogCount += 1
+            LogTap.shared.note("[NativeAVPlayer] accessLog uri=\(event.uri ?? "-") server=\(event.serverAddress ?? "-") bytes=\(event.numberOfBytesTransferred) reqs=\(event.numberOfMediaRequests)")
+        }
+        notificationObservers.append(accessLogObs)
+
+        let failedToEndObs = NotificationCenter.default.addObserver(
+            forName: AVPlayerItem.failedToPlayToEndTimeNotification,
+            object: item,
+            queue: .main
+        ) { notification in
+            let err = notification.userInfo?[AVPlayerItemFailedToPlayToEndTimeErrorKey] as? NSError
+            let suffix = err.map { " \($0.domain)/\($0.code) '\($0.localizedDescription)'" } ?? ""
+            LogTap.shared.note("[NativeAVPlayer] failedToPlayToEndTime\(suffix)")
+        }
+        notificationObservers.append(failedToEndObs)
+
+        let stalledObs = NotificationCenter.default.addObserver(
+            forName: AVPlayerItem.playbackStalledNotification,
+            object: item,
+            queue: .main
+        ) { _ in
+            LogTap.shared.note("[NativeAVPlayer] playbackStalled")
+        }
+        notificationObservers.append(stalledObs)
 
         // Periodic time observer at 100 ms drives the scrub bar
         // and the resume-position progress reporter. The closure is
@@ -183,6 +270,13 @@ final class NativeAVPlayer: ObservableObject {
         statusObservation = nil
         rateObservation?.invalidate()
         rateObservation = nil
+        timeControlObservation?.invalidate()
+        timeControlObservation = nil
+        for obs in notificationObservers {
+            NotificationCenter.default.removeObserver(obs)
+        }
+        notificationObservers.removeAll()
+        accessLogCount = 0
         avPlayer.replaceCurrentItem(with: nil)
         playerItem = nil
         isReady = false
