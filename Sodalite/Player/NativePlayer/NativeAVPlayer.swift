@@ -106,7 +106,7 @@ final class NativeAVPlayer: ObservableObject {
             }
         }
 
-        // Periodic time observer at 100 ms — drives the scrub bar
+        // Periodic time observer at 100 ms drives the scrub bar
         // and the resume-position progress reporter. The closure is
         // already invoked on `.main`, so the `MainActor` mutation
         // is safe; cast through a Task to satisfy the Sendable check.
