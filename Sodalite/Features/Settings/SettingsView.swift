@@ -159,6 +159,14 @@ struct SettingsView: View {
             ) {
                 ChangelogListView()
             }
+
+            SettingsTile(
+                icon: "hammer",
+                title: "Developer",
+                subtitle: "Dolby Browser Test Kit playback diagnostics"
+            ) {
+                DolbyTestKitView()
+            }
         }
     }
 

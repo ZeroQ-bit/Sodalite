@@ -142,7 +142,6 @@ final class PlayerHostController: UIViewController {
                 DispatchQueue.main.async { self?.swapVideoLayer(to: newLayer) }
             }
         }
-
         // Forward the engine's own layer-replaced events into the
         // unified callback above. The engine recreates the layer on
         // every aether-route load(), so this keeps PlayerView seeing

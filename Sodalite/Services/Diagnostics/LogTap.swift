@@ -41,6 +41,11 @@ final class LogTap: ObservableObject {
     /// Long lines are truncated when rendered in the overlay (the
     /// view applies `lineLimit(1)` + tail truncation).
     func note(_ line: String) {
+        #if DEBUG
+        if line.hasPrefix("[NativeAVPlayer]") || line.hasPrefix("[DolbyTest]") {
+            print(line)
+        }
+        #endif
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             self.lines.append(line)

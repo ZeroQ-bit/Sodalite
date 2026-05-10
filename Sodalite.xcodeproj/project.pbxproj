@@ -393,10 +393,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 105;
-				DEVELOPMENT_TEAM = 4NY63S72W9;
+				DEVELOPMENT_TEAM = D278M74A3H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SupportingFiles/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
@@ -405,7 +406,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.5.0;
-				PRODUCT_BUNDLE_IDENTIFIER = de.superuser404.Sodalite;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Sodalite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -429,10 +430,11 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 105;
-				DEVELOPMENT_TEAM = 4NY63S72W9;
+				DEVELOPMENT_TEAM = D278M74A3H;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SupportingFiles/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIUserInterfaceStyle = Automatic;
@@ -441,7 +443,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.5.0;
-				PRODUCT_BUNDLE_IDENTIFIER = de.superuser404.Sodalite;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Sodalite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -461,10 +463,11 @@
 				CODE_SIGN_ENTITLEMENTS = SupportingFiles/SodaliteTopShelf.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4NY63S72W9;
+				CURRENT_PROJECT_VERSION = 105;
+				DEVELOPMENT_TEAM = D278M74A3H;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SupportingFiles/SodaliteTopShelf-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sodalite Top Shelf";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -475,7 +478,7 @@
 					"-e",
 					_NSExtensionMain,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = de.superuser404.Sodalite.TopShelf;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Sodalite.TopShelf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -496,10 +499,11 @@
 				CODE_SIGN_ENTITLEMENTS = SupportingFiles/SodaliteTopShelf.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4NY63S72W9;
+				CURRENT_PROJECT_VERSION = 105;
+				DEVELOPMENT_TEAM = D278M74A3H;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SupportingFiles/SodaliteTopShelf-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Sodalite Top Shelf";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -510,7 +514,7 @@
 					"-e",
 					_NSExtensionMain,
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = de.superuser404.Sodalite.TopShelf;
+				PRODUCT_BUNDLE_IDENTIFIER = app.Sodalite.TopShelf;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;

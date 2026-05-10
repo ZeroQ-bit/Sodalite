@@ -113,6 +113,9 @@ final class NativeAVPlayer: ObservableObject {
             let nsErr = item.error as NSError?
             let errSuffix = nsErr.map { " err=\($0.domain)/\($0.code) '\($0.localizedDescription)'" } ?? ""
             LogTap.shared.note("[NativeAVPlayer] item.status=\(statusStr)\(errSuffix)")
+            if let nsErr {
+                LogTap.shared.note("[NativeAVPlayer] item.error.details \(Self.describe(error: nsErr))")
+            }
             Task { @MainActor in
                 guard let self = self else { return }
                 switch item.status {
@@ -265,6 +268,36 @@ final class NativeAVPlayer: ObservableObject {
         // told to play, so deferring play() on item.status kept the
         // status stuck at .unknown forever.
         avPlayer.play()
+    }
+
+    private static func describe(error: NSError) -> String {
+        var pieces: [String] = []
+        if let reason = error.userInfo[NSLocalizedFailureReasonErrorKey] as? String {
+            pieces.append("reason='\(reason)'")
+        }
+        if let recovery = error.userInfo[NSLocalizedRecoverySuggestionErrorKey] as? String {
+            pieces.append("recovery='\(recovery)'")
+        }
+        if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError {
+            pieces.append("underlying=\(underlying.domain)/\(underlying.code) '\(underlying.localizedDescription)'")
+            let nested = describe(error: underlying)
+            if !nested.isEmpty {
+                pieces.append("underlyingDetails={\(nested)}")
+            }
+        }
+        for key in [
+            AVErrorMediaTypeKey,
+            AVErrorMediaSubTypeKey,
+            AVErrorPresentationTimeStampKey,
+            AVErrorFileSizeKey,
+            AVErrorPIDKey,
+            AVErrorRecordingSuccessfullyFinishedKey
+        ] {
+            if let value = error.userInfo[key] {
+                pieces.append("\(key)=\(value)")
+            }
+        }
+        return pieces.isEmpty ? "none" : pieces.joined(separator: " ")
     }
 
     func pause() {
