@@ -460,11 +460,11 @@ final class PlayerViewModel {
             if engineRoute == .native {
                 // Phase 5 of the hybrid rollout: route DV streams
                 // through AVPlayer for the HDMI handshake to "Dolby
-                // Vision". AetherEngine wraps the source as
-                // loopback HLS-fMP4 and returns the playlist URL;
-                // we hand it to NativeAVPlayer. Display criteria
-                // were set above in `applyDisplayCriteria` already,
-                // same as for the aether path.
+                // Vision". Native MP4/M4V/MOV sources go straight to
+                // AVPlayer; other containers still ask AetherEngine
+                // for a loopback HLS-fMP4 view. Display criteria were
+                // set above in `applyDisplayCriteria` already, same
+                // as for the aether path.
                 //
                 // If the engine throws (P7 reject, malformed source,
                 // server bind failure), fall through to the aether
@@ -474,14 +474,21 @@ final class PlayerViewModel {
                 // the TV doesn't stay in HDR/DV mode while the
                 // aether path renders content that may not need it.
                 do {
-                    let localhostURL = try player.startNativeVideoSession(url: url)
-                    LogTap.shared.note("[PlayerVM] native session started: \(localhostURL.absoluteString)")
+                    let nativeURL: URL
+                    if shouldUseNativeDirectMP4(for: source, playbackURL: url) {
+                        nativeURL = url
+                        LogTap.shared.note("[PlayerVM] native direct MP4 url=\(nativeURL.absoluteString)")
+                    } else {
+                        let localhostURL = try player.startNativeVideoSession(url: url)
+                        nativeURL = localhostURL
+                        LogTap.shared.note("[PlayerVM] native HLS session started: \(localhostURL.absoluteString)")
+                    }
 
                     let np = NativeAVPlayer()
                     nativePlayer = np
                     onActiveVideoLayerChanged?(np.playerLayer)
                     wireNativePlayerObservers(np)
-                    np.load(url: localhostURL, startPosition: startPos)
+                    np.load(url: nativeURL, startPosition: startPos)
                     np.play()
 
                     totalTime = formatSeconds(effectiveDuration)
@@ -1263,10 +1270,10 @@ final class PlayerViewModel {
     /// FFmpeg + VideoToolbox + AVSampleBufferDisplayLayer path
     /// (`.aether`) cannot trigger the HDMI Dolby Vision handshake
     /// on tvOS; only `AVPlayer`-rooted playback can. For DV streams
-    /// where AetherEngine can produce a loopback HLS-fMP4 view of
-    /// the source — which it can for any container FFmpeg demuxes,
-    /// MKV included — we route through the native AVPlayer path
-    /// (`.native`). Everything else stays on the engine.
+    /// where AVPlayer can directly consume the MP4 source, or where
+    /// AetherEngine can produce a loopback HLS-fMP4 view of the
+    /// source, we route through the native AVPlayer path (`.native`).
+    /// Everything else stays on the engine.
     ///
     /// Eligibility:
     /// - format must be `.dolbyVision`
@@ -1306,6 +1313,22 @@ final class PlayerViewModel {
         guard hasCompatibleAudio else { return .aether }
 
         return .native
+    }
+
+    private func shouldUseNativeDirectMP4(for source: PlaybackMediaSource, playbackURL: URL) -> Bool {
+        guard isNativeMP4Container(source.container) else { return false }
+        guard source.supportsDirectPlay == true || source.supportsDirectStream == true else { return false }
+
+        let extensionHint = playbackURL.pathExtension.lowercased()
+        return extensionHint.isEmpty || ["mp4", "m4v", "mov"].contains(extensionHint)
+    }
+
+    private func isNativeMP4Container(_ container: String?) -> Bool {
+        guard let container else { return false }
+        return container
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+            .contains { ["mp4", "m4v", "mov"].contains($0) }
     }
 
     func formatSeconds(_ seconds: Double) -> String {
